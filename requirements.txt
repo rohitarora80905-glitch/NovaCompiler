@@ -1,0 +1,7 @@
+# Nova has no dependencies at all.
+#
+# Everything is written against the Python 3 standard library: no PLY, no ANTLR,
+# no LLVM toolchain, no C or C++ compiler, no pip install of any kind. The
+# desktop viewer uses tkinter, which ships with the official Windows installer
+# for Python. `pip install -r requirements.txt` is therefore a no-op, and that
+# is the point - the project builds every table it uses from scratch.

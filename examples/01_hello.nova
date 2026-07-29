@@ -1,0 +1,8 @@
+# The smallest interesting Nova program.
+# Run it with:   python -m nova run examples/01_hello.nova
+
+print "hello from the Nova compiler";
+
+let a = 6;
+let b = 7;
+print a * b;

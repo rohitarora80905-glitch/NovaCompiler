@@ -1,0 +1,10 @@
+# Deliberately wrong, to show that every phase reports and recovers instead of
+# dying at the first mistake.  Expect several diagnostics from several phases.
+
+let good = 1;
+let bad = 2 @ 3;            # lexical: '@' is not a Nova character
+let missing = ;             # syntax:  nothing to assign
+print undeclared_name;      # semantic: never declared
+let s = "text" * 4;         # type:    a string cannot be multiplied
+let never_read = 7;         # warning: assigned but never used
+print good;

@@ -1,0 +1,45 @@
+Hostile bytecode, handed straight to the virtual machine
+========================================================================
+
+1. Branch outside the code
+   A jump whose target is past the end of the instruction array. On a real machine this is how you make execution continue into data you control.
+   -> BLOCKED by the static verifier
+      main[2] GOTO: jump target 9999 is outside the code (0..4)
+
+2. Operand-stack underflow
+   ADD is executed with nothing on the stack. An unchecked stack machine would read whatever memory sits below the stack.
+   -> BLOCKED by the static verifier
+      main[0] ADD: operand stack underflow (the instruction needs a value but the stack is empty)
+
+3. Inconsistent stack depth at a merge point
+   Two paths reach the same instruction with different stack depths, so the machine cannot know what is on the stack there. This is the property that makes bytecode verification possible at all.
+   -> BLOCKED by the static verifier
+      main[5] PRINT: operand stack underflow (the instruction needs a value but the stack is empty)
+      main: instruction 5 is reached with stack depth 0 on one path and 1 on another - the operand stack is not consistent at this merge point
+
+4. Type confusion
+   A string is multiplied by an integer. If the machine simply trusted the opcode, the string's internal pointer would be used as a number - the classic route to arbitrary memory access.
+   -> BLOCKED by the static verifier
+      main[2] MUL: arithmetic on a string value
+
+5. Reading an uninitialised local
+   Slot 1 is read before anything is ever written to it, which leaks whatever the previous call left in that stack slot.
+   -> BLOCKED by the static verifier
+      main[0] LOAD: local slot 1 is read before it is ever written
+
+6. Escaping the activation record
+   LOAD addresses slot 40 in a frame that only has 2 slots, reaching into the caller's frame or past the end of the stack entirely.
+   -> BLOCKED by the static verifier
+      main[0] LOAD: slot 40 is outside the activation record (0..1)
+
+7. Denial of service: a loop that never ends
+   This bytecode is perfectly type-safe and passes every static check. Nothing static can prove it terminates, so the *sandbox* has to stop it with an instruction budget.
+   -> BLOCKED by the run-time sandbox
+      sandbox stopped the program: instruction budget of 200000 exhausted - the program does not terminate
+
+8. Denial of service: unbounded recursion
+   Also statically valid. The sandbox caps the number of activation records, so the machine reports a policy violation instead of exhausting memory.
+   -> BLOCKED by the run-time sandbox
+      sandbox stopped the program: call depth limit of 64 reached - runaway recursion in 'boom'
+
+8 of 8 attacks stopped before they could do anything.

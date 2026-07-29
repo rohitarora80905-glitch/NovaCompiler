@@ -1,0 +1,30 @@
+Nova self-test - 26 tests
+======================================================================================
+M1  regex to DFA by the direct method: (a|b)*abb has 4 states               ok
+M1  DFA minimisation merges equivalent states                               ok
+M1  the scanner takes the longest match and keeps keywords apart            ok
+M2  FIRST and FOLLOW on the dragon-book expression grammar                  ok
+M2  left recursion is detected and removed                                  ok
+M2  an ambiguous grammar really does produce shift/reduce conflicts         ok
+M2  SLR, CLR and LALR all accept the Nova grammar; LALR is the compact one  ok
+M2  the LALR parser accepts exactly what the hand-written parser accepts    ok
+M3  the type checker catches the mistakes and allows the rest               ok
+M3  an inner declaration shadows an outer one instead of overwriting it     ok
+M4  booleans are compiled as jumping code, so 'and' short circuits          ok
+M4  'case' becomes a jump table and every jump gets backpatched             ok
+M5  copy propagation refuses to propagate a killed copy (the gcd trap)      ok
+M5  the optimiser really removes instructions on code written badly         ok
+M5  every data-flow analysis reaches a fixed point                          ok
+M6  the register machine and the stack machine agree on every example       ok
+M6  optimised and unoptimised code produce identical output                 ok
+M6  recursion builds and unwinds real activation records                    ok
+M7  phi functions appear exactly where the dominance frontier says          ok
+M7  loop dependence analysis separates parallel from sequential loops       ok
+M8  honest bytecode passes the verifier                                     ok
+M8  every hostile bytecode program is stopped                               ok
+M8  the verifier does not reject a program merely for being unusual         ok
+E2E every example compiles, verifies, runs and prints what it should        ok
+E2E the broken example produces diagnostics from several phases at once     ok
+E2E the HTML report is generated for a real program                         ok
+======================================================================================
+26 passed, 0 failed

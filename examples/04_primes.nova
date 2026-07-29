@@ -1,0 +1,25 @@
+# Nested loops and short-circuit boolean operators.
+# 'and' compiles to jumping code: when the left side is false the right side
+# is never evaluated, which you can see in the three-address code.
+
+func isprime(n)
+    if n < 2 then return 0; end
+    let d = 2;
+    while d * d <= n do
+        if n % d == 0 then return 0; end
+        d = d + 1;
+    end
+    return 1;
+end
+
+let n = 2;
+let found = 0;
+let sum = 0;
+while found < 10 do
+    if isprime(n) == 1 and n > 1 then
+        sum = sum + n;
+        found = found + 1;
+    end
+    n = n + 1;
+end
+print sum;

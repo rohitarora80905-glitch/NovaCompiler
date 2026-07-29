@@ -1,0 +1,32 @@
+# Written badly on purpose, so the optimiser has work to do.
+#
+#   * width * height does not change inside the loop -> hoisted out (LICM)
+#   * it is then computed a second time              -> common sub-expression
+#   * i * 8 grows by a fixed step each iteration     -> strength reduced
+#   * 99 * 3 is known at compile time                -> constant folded
+#   * 'unused' is never read                         -> dead code eliminated
+#
+# 'measure' hides its result from the optimiser, so width and height really are
+# unknown at compile time - otherwise constant folding would finish the job
+# before loop-invariant code motion ever got a turn.
+
+func measure(x)
+    return x;
+end
+
+let n = 5;
+let width = measure(4);
+let height = measure(6);
+let i = 0;
+let acc = 0;
+let unused = 99 * 3;
+
+while i < n do
+    let area = width * height;
+    let scaled = i * 8;
+    acc = acc + area + scaled;
+    let dup = width * height;
+    acc = acc + dup;
+    i = i + 1;
+end
+print acc;

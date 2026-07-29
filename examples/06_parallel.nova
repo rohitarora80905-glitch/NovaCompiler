@@ -1,0 +1,35 @@
+# Three loops that look alike but are not.
+# The dependence analyser in the SSA & parallelism tab classifies each one.
+
+let n = 8;
+let i = 0;
+let a = 0;
+let b = 0;
+let c = 0;
+
+# 1. every iteration is independent  -> vectorisable
+while i < n do
+    a = i * 2;
+    i = i + 1;
+end
+
+# 2. a running total  -> not independent, but it is a recognised reduction
+i = 0;
+while i < n do
+    b = b + i;
+    i = i + 1;
+end
+
+# 3. each iteration needs the value the previous one produced, and the
+#    operation is not associative, so it is not a reduction either
+#    -> genuinely sequential
+i = 1;
+c = 1;
+while i < n do
+    c = c * 3 - i;
+    i = i + 1;
+end
+
+print a;
+print b;
+print c;

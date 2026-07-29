@@ -1,0 +1,30 @@
+# Semantic analysis: scopes, shadowing, types and booleans.
+
+let x = 10;
+
+func classify(v)
+    if v < 0 then
+        return "negative";
+    else
+        if v == 0 then return "zero"; end
+    end
+    return "positive";
+end
+
+let flag = x > 5 and not (x == 100);
+if flag then
+    print classify(x);
+    print classify(0 - x);
+    print classify(x - x);
+end
+
+# The 'x' declared inside the loop body is a different variable from the
+# outer 'x'.  Assigning to it cannot affect the loop counter, which is why
+# the loop below still ends.  Check the Scope column of the symbol table.
+let n = 3;
+while n > 0 do
+    let x = 100;
+    x = x + 1;
+    n = n - 1;
+end
+print x;                # still 10 - the outer x was never touched

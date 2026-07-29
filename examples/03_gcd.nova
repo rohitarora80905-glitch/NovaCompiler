@@ -1,0 +1,18 @@
+# Euclid's algorithm.  Two functions, so there are two activation records
+# on the stack at once - visible in the "Run" tab.
+
+func gcd(a, b)
+    while b > 0 do
+        let t = b;
+        b = a % b;
+        a = t;
+    end
+    return a;
+end
+
+func lcm(a, b)
+    return a / gcd(a, b) * b;
+end
+
+print gcd(1071, 462);
+print lcm(21, 6);
