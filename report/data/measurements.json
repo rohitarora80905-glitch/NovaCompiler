@@ -1,0 +1,2864 @@
+{
+ "environment": {
+  "python": "3.14.3",
+  "implementation": "CPython",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "runs": 60,
+  "http_runs": 30,
+  "high_priority": false,
+  "power": "battery"
+ },
+ "lexer": {
+  "positions": 147,
+  "dfa_states_before_min": 92,
+  "dfa_states_after_min": 92,
+  "symbol_classes": 37,
+  "token_patterns": 41,
+  "keywords": 19,
+  "specs": 41
+ },
+ "bytecode_opcodes": 24,
+ "lr_cache_build_ms": 3806.7,
+ "grammar": {
+  "productions": 58,
+  "terminals": 39,
+  "nonterminals": 20,
+  "ll1_conflicts": 77,
+  "ll1_conflicts_after_left_recursion": 4,
+  "nonterminals_after_left_recursion": 31,
+  "productions_after_left_recursion": 69,
+  "ambiguous_productions": 5,
+  "ambiguous_conflicts": [
+   {
+    "state": 8,
+    "symbol": "STAR",
+    "kind": "shift/reduce"
+   },
+   {
+    "state": 8,
+    "symbol": "PLUS",
+    "kind": "shift/reduce"
+   },
+   {
+    "state": 9,
+    "symbol": "STAR",
+    "kind": "shift/reduce"
+   },
+   {
+    "state": 9,
+    "symbol": "PLUS",
+    "kind": "shift/reduce"
+   }
+  ],
+  "tables": {
+   "SLR": {
+    "states": 116,
+    "entries": 1229,
+    "conflicts": 0,
+    "build_ms": 38.111
+   },
+   "CLR": {
+    "states": 478,
+    "entries": 4790,
+    "conflicts": 0,
+    "build_ms": 1771.574
+   },
+   "LALR": {
+    "states": 116,
+    "entries": 1214,
+    "conflicts": 0,
+    "build_ms": 1798.66
+   }
+  }
+ },
+ "grammar_json_bytes": 164061,
+ "programs": [
+  {
+   "file": "01_hello.nova",
+   "lines": 8,
+   "code_lines": 4,
+   "ok": true,
+   "tokens": 18,
+   "lr_ok": true,
+   "lr_steps": 68,
+   "rd_calls": 5,
+   "symbols": 2,
+   "functions": 1,
+   "sdd_events": 3,
+   "tac": 6,
+   "backpatches": 0,
+   "ir_before": 6,
+   "ir_after": 3,
+   "blocks": 1,
+   "loops": 0,
+   "phis": 0,
+   "ssa_constants": 0,
+   "spills": 0,
+   "target": 5,
+   "bytecode_raw": 14,
+   "bytecode_opt": 6,
+   "peephole": 0,
+   "verify_ok": true,
+   "verify_checks": 6,
+   "verify_pass": 6,
+   "max_stack_proved": 1,
+   "llvm_lines": 18,
+   "compile_ms": 1.967,
+   "compile_ms_p10": 1.866,
+   "compile_ms_p90": 2.546,
+   "compile_cpu_ms": 2.083,
+   "phase_ms": {
+    "1. Lexical analysis": 0.216,
+    "2. Syntax analysis": 0.426,
+    "3. Semantic analysis": 0.035,
+    "4. Intermediate code": 0.024,
+    "5-7. Optimise, data flow, code generation": 0.87,
+    "8. Bytecode verification": 0.054,
+    "Execution": 0.132
+   },
+   "json_bytes": 34806,
+   "diagnostics": [],
+   "dataflow": {
+    "main": {
+     "Reaching definitions": 1,
+     "Live variables": 1,
+     "Available expressions": 1,
+     "Very busy expressions": 2
+    }
+   },
+   "loop_reports": [],
+   "passes": {
+    "main": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 1 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 6,
+      "after": 3,
+      "removed": 3,
+      "detail": "3 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 3,
+      "after": 3,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 3,
+      "after": 3,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 3,
+      "after": 3,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 3,
+      "after": 3,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ]
+   },
+   "run": {
+    "output": [
+     "hello from the Nova compiler",
+     "42"
+    ],
+    "error": "",
+    "steps_opt": 6,
+    "steps_raw": 14,
+    "steps_reg": 5,
+    "max_frames": 1,
+    "max_stack": 1,
+    "agree": true
+   },
+   "optimiser_off": {
+    "ir": 6,
+    "bytecode": 14,
+    "steps": 14,
+    "same_output": true
+   }
+  },
+  {
+   "file": "02_fibonacci.nova",
+   "lines": 23,
+   "code_lines": 16,
+   "ok": true,
+   "tokens": 84,
+   "lr_ok": true,
+   "lr_steps": 297,
+   "rd_calls": 15,
+   "symbols": 4,
+   "functions": 2,
+   "sdd_events": 14,
+   "tac": 28,
+   "backpatches": 6,
+   "ir_before": 28,
+   "ir_after": 28,
+   "blocks": 13,
+   "loops": 1,
+   "phis": 3,
+   "ssa_constants": 2,
+   "spills": 0,
+   "target": 61,
+   "bytecode_raw": 60,
+   "bytecode_opt": 60,
+   "peephole": 3,
+   "verify_ok": true,
+   "verify_checks": 12,
+   "verify_pass": 12,
+   "max_stack_proved": 2,
+   "llvm_lines": 99,
+   "compile_ms": 36.268,
+   "compile_ms_p10": 32.091,
+   "compile_ms_p90": 47.091,
+   "compile_cpu_ms": 36.198,
+   "phase_ms": {
+    "1. Lexical analysis": 0.941,
+    "2. Syntax analysis": 2.655,
+    "3. Semantic analysis": 0.143,
+    "4. Intermediate code": 0.13,
+    "5-7. Optimise, data flow, code generation": 8.69,
+    "8. Bytecode verification": 0.374,
+    "Execution": 27.984
+   },
+   "json_bytes": 148220,
+   "diagnostics": [],
+   "dataflow": {
+    "fib": {
+     "Reaching definitions": 2,
+     "Live variables": 2,
+     "Available expressions": 2,
+     "Very busy expressions": 2
+    },
+    "main": {
+     "Reaching definitions": 2,
+     "Live variables": 3,
+     "Available expressions": 2,
+     "Very busy expressions": 1
+    }
+   },
+   "loop_reports": [
+    {
+     "function": "main",
+     "header": 1,
+     "verdict": "PARALLELISABLE AS A REDUCTION",
+     "carried": [],
+     "reductions": [
+      "total"
+     ],
+     "induction": [
+      "i"
+     ],
+     "privatisable": [
+      "t0"
+     ]
+    }
+   ],
+   "passes": {
+    "fib": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 11,
+      "after": 11,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 11,
+      "after": 11,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 11,
+      "after": 11,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 11,
+      "after": 11,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 11,
+      "after": 11,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 11,
+      "after": 11,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 11,
+      "after": 11,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 11,
+      "after": 11,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 11,
+      "after": 11,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 11,
+      "after": 11,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ],
+    "main": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ]
+   },
+   "run": {
+    "output": [
+     "88",
+     "eighty-eight"
+    ],
+    "error": "",
+    "steps_opt": 4074,
+    "steps_raw": 4074,
+    "steps_reg": 3819,
+    "max_frames": 10,
+    "max_stack": 2,
+    "agree": true
+   },
+   "optimiser_off": {
+    "ir": 28,
+    "bytecode": 60,
+    "steps": 4074,
+    "same_output": true
+   }
+  },
+  {
+   "file": "03_gcd.nova",
+   "lines": 18,
+   "code_lines": 13,
+   "ok": true,
+   "tokens": 68,
+   "lr_ok": true,
+   "lr_steps": 239,
+   "rd_calls": 11,
+   "symbols": 7,
+   "functions": 3,
+   "sdd_events": 10,
+   "tac": 22,
+   "backpatches": 2,
+   "ir_before": 22,
+   "ir_after": 22,
+   "blocks": 6,
+   "loops": 1,
+   "phis": 3,
+   "ssa_constants": 0,
+   "spills": 0,
+   "target": 42,
+   "bytecode_raw": 43,
+   "bytecode_opt": 43,
+   "peephole": 4,
+   "verify_ok": true,
+   "verify_checks": 18,
+   "verify_pass": 18,
+   "max_stack_proved": 2,
+   "llvm_lines": 79,
+   "compile_ms": 10.555,
+   "compile_ms_p10": 8.839,
+   "compile_ms_p90": 13.938,
+   "compile_cpu_ms": 10.417,
+   "phase_ms": {
+    "1. Lexical analysis": 0.544,
+    "2. Syntax analysis": 1.705,
+    "3. Semantic analysis": 0.116,
+    "4. Intermediate code": 0.082,
+    "5-7. Optimise, data flow, code generation": 4.83,
+    "8. Bytecode verification": 0.266,
+    "Execution": 1.333
+   },
+   "json_bytes": 103484,
+   "diagnostics": [],
+   "dataflow": {
+    "gcd": {
+     "Reaching definitions": 2,
+     "Live variables": 3,
+     "Available expressions": 2,
+     "Very busy expressions": 1
+    },
+    "lcm": {
+     "Reaching definitions": 2,
+     "Live variables": 2,
+     "Available expressions": 1,
+     "Very busy expressions": 2
+    },
+    "main": {
+     "Reaching definitions": 1,
+     "Live variables": 1,
+     "Available expressions": 1,
+     "Very busy expressions": 1
+    }
+   },
+   "loop_reports": [
+    {
+     "function": "gcd",
+     "header": 0,
+     "verdict": "SEQUENTIAL",
+     "carried": [
+      "a",
+      "b"
+     ],
+     "reductions": [],
+     "induction": [],
+     "privatisable": [
+      "t"
+     ]
+    }
+   ],
+   "passes": {
+    "gcd": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ],
+    "lcm": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ],
+    "main": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 9,
+      "after": 9,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 9,
+      "after": 9,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 9,
+      "after": 9,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 9,
+      "after": 9,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 9,
+      "after": 9,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 9,
+      "after": 9,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 9,
+      "after": 9,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 9,
+      "after": 9,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 9,
+      "after": 9,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 9,
+      "after": 9,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ]
+   },
+   "run": {
+    "output": [
+     "21",
+     "42"
+    ],
+    "error": "",
+    "steps_opt": 100,
+    "steps_raw": 100,
+    "steps_reg": 91,
+    "max_frames": 3,
+    "max_stack": 2,
+    "agree": true
+   },
+   "optimiser_off": {
+    "ir": 22,
+    "bytecode": 43,
+    "steps": 100,
+    "same_output": true
+   }
+  },
+  {
+   "file": "04_primes.nova",
+   "lines": 25,
+   "code_lines": 20,
+   "ok": true,
+   "tokens": 103,
+   "lr_ok": true,
+   "lr_steps": 363,
+   "rd_calls": 19,
+   "symbols": 6,
+   "functions": 2,
+   "sdd_events": 22,
+   "tac": 31,
+   "backpatches": 11,
+   "ir_before": 31,
+   "ir_after": 31,
+   "blocks": 21,
+   "loops": 2,
+   "phis": 9,
+   "ssa_constants": 4,
+   "spills": 0,
+   "target": 68,
+   "bytecode_raw": 71,
+   "bytecode_opt": 71,
+   "peephole": 3,
+   "verify_ok": true,
+   "verify_checks": 12,
+   "verify_pass": 12,
+   "max_stack_proved": 2,
+   "llvm_lines": 110,
+   "compile_ms": 28.565,
+   "compile_ms_p10": 23.466,
+   "compile_ms_p90": 43.163,
+   "compile_cpu_ms": 27.604,
+   "phase_ms": {
+    "1. Lexical analysis": 0.894,
+    "2. Syntax analysis": 2.6,
+    "3. Semantic analysis": 0.161,
+    "4. Intermediate code": 0.149,
+    "5-7. Optimise, data flow, code generation": 9.953,
+    "8. Bytecode verification": 0.35,
+    "Execution": 10.505
+   },
+   "json_bytes": 174455,
+   "diagnostics": [],
+   "dataflow": {
+    "isprime": {
+     "Reaching definitions": 3,
+     "Live variables": 3,
+     "Available expressions": 2,
+     "Very busy expressions": 3
+    },
+    "main": {
+     "Reaching definitions": 3,
+     "Live variables": 3,
+     "Available expressions": 2,
+     "Very busy expressions": 1
+    }
+   },
+   "loop_reports": [
+    {
+     "function": "isprime",
+     "header": 4,
+     "verdict": "VECTORISABLE / PARALLELISABLE",
+     "carried": [],
+     "reductions": [],
+     "induction": [
+      "d"
+     ],
+     "privatisable": [
+      "t0",
+      "t1"
+     ]
+    },
+    {
+     "function": "main",
+     "header": 1,
+     "verdict": "PARALLELISABLE AS A REDUCTION",
+     "carried": [],
+     "reductions": [
+      "sum"
+     ],
+     "induction": [
+      "found",
+      "n"
+     ],
+     "privatisable": [
+      "t0"
+     ]
+    }
+   ],
+   "passes": {
+    "isprime": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 14,
+      "after": 14,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 14,
+      "after": 14,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 14,
+      "after": 14,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 14,
+      "after": 14,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 14,
+      "after": 14,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 14,
+      "after": 14,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 14,
+      "after": 14,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 14,
+      "after": 14,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 14,
+      "after": 14,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 14,
+      "after": 14,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ],
+    "main": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ]
+   },
+   "run": {
+    "output": [
+     "129"
+    ],
+    "error": "",
+    "steps_opt": 1610,
+    "steps_raw": 1610,
+    "steps_reg": 1485,
+    "max_frames": 2,
+    "max_stack": 2,
+    "agree": true
+   },
+   "optimiser_off": {
+    "ir": 31,
+    "bytecode": 71,
+    "steps": 1610,
+    "same_output": true
+   }
+  },
+  {
+   "file": "05_optimiser.nova",
+   "lines": 32,
+   "code_lines": 18,
+   "ok": true,
+   "tokens": 97,
+   "lr_ok": true,
+   "lr_steps": 318,
+   "rd_calls": 17,
+   "symbols": 11,
+   "functions": 2,
+   "sdd_events": 21,
+   "tac": 21,
+   "backpatches": 2,
+   "ir_before": 21,
+   "ir_after": 19,
+   "blocks": 6,
+   "loops": 1,
+   "phis": 4,
+   "ssa_constants": 3,
+   "spills": 1,
+   "target": 42,
+   "bytecode_raw": 55,
+   "bytecode_opt": 47,
+   "peephole": 2,
+   "verify_ok": true,
+   "verify_checks": 12,
+   "verify_pass": 12,
+   "max_stack_proved": 2,
+   "llvm_lines": 71,
+   "compile_ms": 15.372,
+   "compile_ms_p10": 12.552,
+   "compile_ms_p90": 19.062,
+   "compile_cpu_ms": 14.323,
+   "phase_ms": {
+    "1. Lexical analysis": 1.148,
+    "2. Syntax analysis": 2.124,
+    "3. Semantic analysis": 0.156,
+    "4. Intermediate code": 0.092,
+    "5-7. Optimise, data flow, code generation": 6.051,
+    "8. Bytecode verification": 0.254,
+    "Execution": 2.297
+   },
+   "json_bytes": 127218,
+   "diagnostics": [
+    {
+     "phase": "Semantic",
+     "line": 22,
+     "col": 0,
+     "message": "variable 'unused' is declared but never used",
+     "hint": "delete it, or use it - this is a warning, compilation continues",
+     "warning": true
+    }
+   ],
+   "dataflow": {
+    "measure": {
+     "Reaching definitions": 2,
+     "Live variables": 2,
+     "Available expressions": 1,
+     "Very busy expressions": 1
+    },
+    "main": {
+     "Reaching definitions": 2,
+     "Live variables": 3,
+     "Available expressions": 2,
+     "Very busy expressions": 2
+    }
+   },
+   "loop_reports": [
+    {
+     "function": "main",
+     "header": 1,
+     "verdict": "PARALLELISABLE AS A REDUCTION",
+     "carried": [],
+     "reductions": [
+      "acc"
+     ],
+     "induction": [
+      "i",
+      "scaled"
+     ],
+     "privatisable": [
+      "t0"
+     ]
+    }
+   ],
+   "passes": {
+    "measure": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 1,
+      "after": 1,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 1,
+      "after": 1,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 1,
+      "after": 1,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 1,
+      "after": 1,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 1,
+      "after": 1,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 1,
+      "after": 1,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 1,
+      "after": 1,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 1,
+      "after": 1,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 1,
+      "after": 1,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 1,
+      "after": 1,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ],
+    "main": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 20,
+      "after": 20,
+      "removed": 0,
+      "detail": "1 common sub-expression(s) reused, 1 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 20,
+      "after": 20,
+      "removed": 0,
+      "detail": "1 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 20,
+      "after": 20,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 20,
+      "after": 20,
+      "removed": 0,
+      "detail": "1 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 20,
+      "after": 21,
+      "removed": -1,
+      "detail": "0 multiplication(s) turned into addition, 1 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 21,
+      "after": 18,
+      "removed": 3,
+      "detail": "3 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 18,
+      "after": 18,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 18,
+      "after": 18,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 18,
+      "after": 18,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 1 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 18,
+      "after": 18,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ]
+   },
+   "run": {
+    "output": [
+     "320"
+    ],
+    "error": "",
+    "steps_opt": 148,
+    "steps_raw": 188,
+    "steps_reg": 119,
+    "max_frames": 2,
+    "max_stack": 2,
+    "agree": true
+   },
+   "optimiser_off": {
+    "ir": 21,
+    "bytecode": 55,
+    "steps": 188,
+    "same_output": true
+   }
+  },
+  {
+   "file": "06_parallel.nova",
+   "lines": 35,
+   "code_lines": 23,
+   "ok": true,
+   "tokens": 102,
+   "lr_ok": true,
+   "lr_steps": 363,
+   "rd_calls": 21,
+   "symbols": 5,
+   "functions": 1,
+   "sdd_events": 15,
+   "tac": 28,
+   "backpatches": 6,
+   "ir_before": 28,
+   "ir_after": 26,
+   "blocks": 13,
+   "loops": 3,
+   "phis": 7,
+   "ssa_constants": 6,
+   "spills": 0,
+   "target": 56,
+   "bytecode_raw": 67,
+   "bytecode_opt": 63,
+   "peephole": 1,
+   "verify_ok": true,
+   "verify_checks": 6,
+   "verify_pass": 6,
+   "max_stack_proved": 2,
+   "llvm_lines": 84,
+   "compile_ms": 18.359,
+   "compile_ms_p10": 14.771,
+   "compile_ms_p90": 21.388,
+   "compile_cpu_ms": 17.188,
+   "phase_ms": {
+    "1. Lexical analysis": 1.137,
+    "2. Syntax analysis": 2.738,
+    "3. Semantic analysis": 0.112,
+    "4. Intermediate code": 0.11,
+    "5-7. Optimise, data flow, code generation": 9.157,
+    "8. Bytecode verification": 0.307,
+    "Execution": 4.319
+   },
+   "json_bytes": 142730,
+   "diagnostics": [],
+   "dataflow": {
+    "main": {
+     "Reaching definitions": 2,
+     "Live variables": 3,
+     "Available expressions": 2,
+     "Very busy expressions": 1
+    }
+   },
+   "loop_reports": [
+    {
+     "function": "main",
+     "header": 1,
+     "verdict": "VECTORISABLE / PARALLELISABLE",
+     "carried": [],
+     "reductions": [],
+     "induction": [
+      "i"
+     ],
+     "privatisable": [
+      "a"
+     ]
+    },
+    {
+     "function": "main",
+     "header": 5,
+     "verdict": "PARALLELISABLE AS A REDUCTION",
+     "carried": [],
+     "reductions": [
+      "b"
+     ],
+     "induction": [
+      "i"
+     ],
+     "privatisable": []
+    },
+    {
+     "function": "main",
+     "header": 9,
+     "verdict": "SEQUENTIAL",
+     "carried": [
+      "c"
+     ],
+     "reductions": [],
+     "induction": [
+      "i"
+     ],
+     "privatisable": [
+      "t0"
+     ]
+    }
+   ],
+   "passes": {
+    "main": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 28,
+      "after": 28,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 28,
+      "after": 28,
+      "removed": 0,
+      "detail": "3 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 28,
+      "after": 28,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 28,
+      "after": 28,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 28,
+      "after": 28,
+      "removed": 0,
+      "detail": "1 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 28,
+      "after": 26,
+      "removed": 2,
+      "detail": "2 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 26,
+      "after": 26,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 26,
+      "after": 26,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 26,
+      "after": 26,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 26,
+      "after": 26,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ]
+   },
+   "run": {
+    "output": [
+     "14",
+     "28",
+     "551"
+    ],
+    "error": "",
+    "steps_opt": 336,
+    "steps_raw": 340,
+    "steps_reg": 290,
+    "max_frames": 1,
+    "max_stack": 2,
+    "agree": true
+   },
+   "optimiser_off": {
+    "ir": 28,
+    "bytecode": 67,
+    "steps": 340,
+    "same_output": true
+   }
+  },
+  {
+   "file": "07_types_and_scopes.nova",
+   "lines": 30,
+   "code_lines": 22,
+   "ok": true,
+   "tokens": 104,
+   "lr_ok": true,
+   "lr_steps": 383,
+   "rd_calls": 19,
+   "symbols": 6,
+   "functions": 2,
+   "sdd_events": 21,
+   "tac": 38,
+   "backpatches": 12,
+   "ir_before": 38,
+   "ir_after": 31,
+   "blocks": 22,
+   "loops": 1,
+   "phis": 5,
+   "ssa_constants": 3,
+   "spills": 0,
+   "target": 62,
+   "bytecode_raw": 78,
+   "bytecode_opt": 60,
+   "peephole": 3,
+   "verify_ok": true,
+   "verify_checks": 12,
+   "verify_pass": 12,
+   "max_stack_proved": 2,
+   "llvm_lines": 94,
+   "compile_ms": 19.719,
+   "compile_ms_p10": 15.49,
+   "compile_ms_p90": 24.963,
+   "compile_cpu_ms": 19.271,
+   "phase_ms": {
+    "1. Lexical analysis": 1.54,
+    "2. Syntax analysis": 3.722,
+    "3. Semantic analysis": 0.21,
+    "4. Intermediate code": 0.242,
+    "5-7. Optimise, data flow, code generation": 12.152,
+    "8. Bytecode verification": 0.48,
+    "Execution": 1.538
+   },
+   "json_bytes": 145080,
+   "diagnostics": [],
+   "dataflow": {
+    "classify": {
+     "Reaching definitions": 2,
+     "Live variables": 2,
+     "Available expressions": 1,
+     "Very busy expressions": 1
+    },
+    "main": {
+     "Reaching definitions": 2,
+     "Live variables": 3,
+     "Available expressions": 2,
+     "Very busy expressions": 2
+    }
+   },
+   "loop_reports": [
+    {
+     "function": "main",
+     "header": 10,
+     "verdict": "SEQUENTIAL",
+     "carried": [
+      "n"
+     ],
+     "reductions": [],
+     "induction": [],
+     "privatisable": []
+    }
+   ],
+   "passes": {
+    "classify": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 8,
+      "after": 7,
+      "removed": 1,
+      "detail": "7 of 7 blocks reachable; the rest deleted"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ],
+    "main": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 30,
+      "after": 30,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 1 constant(s) folded, 1 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 30,
+      "after": 30,
+      "removed": 0,
+      "detail": "4 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 30,
+      "after": 30,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 30,
+      "after": 30,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 30,
+      "after": 30,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 30,
+      "after": 25,
+      "removed": 5,
+      "detail": "5 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 25,
+      "after": 25,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 25,
+      "after": 24,
+      "removed": 1,
+      "detail": "1 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 24,
+      "after": 24,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 24,
+      "after": 24,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ]
+   },
+   "run": {
+    "output": [
+     "positive",
+     "negative",
+     "zero",
+     "10"
+    ],
+    "error": "",
+    "steps_opt": 85,
+    "steps_raw": 114,
+    "steps_reg": 87,
+    "max_frames": 2,
+    "max_stack": 2,
+    "agree": true
+   },
+   "optimiser_off": {
+    "ir": 38,
+    "bytecode": 78,
+    "steps": 114,
+    "same_output": true
+   }
+  },
+  {
+   "file": "08_broken.nova",
+   "lines": 10,
+   "code_lines": 7,
+   "ok": false,
+   "tokens": 33,
+   "lr_ok": false,
+   "lr_steps": 22,
+   "rd_calls": 8,
+   "symbols": 3,
+   "functions": 0,
+   "sdd_events": 4,
+   "tac": 0,
+   "backpatches": 0,
+   "ir_before": 0,
+   "ir_after": 0,
+   "blocks": 0,
+   "loops": 0,
+   "phis": 0,
+   "ssa_constants": 0,
+   "spills": 0,
+   "target": 0,
+   "bytecode_raw": 0,
+   "bytecode_opt": 0,
+   "peephole": 0,
+   "verify_ok": false,
+   "verify_checks": 0,
+   "verify_pass": 0,
+   "max_stack_proved": 0,
+   "llvm_lines": 0,
+   "compile_ms": 1.171,
+   "compile_ms_p10": 0.893,
+   "compile_ms_p90": 1.799,
+   "compile_cpu_ms": 1.302,
+   "phase_ms": {
+    "1. Lexical analysis": 0.616,
+    "2. Syntax analysis": 0.369,
+    "3. Semantic analysis": 0.058
+   },
+   "json_bytes": 26621,
+   "diagnostics": [
+    {
+     "phase": "Lexical",
+     "line": 5,
+     "col": 13,
+     "message": "unexpected character '@'",
+     "hint": "delete it, or put it inside a string literal",
+     "warning": false
+    },
+    {
+     "phase": "Syntax",
+     "line": 5,
+     "col": 15,
+     "message": "expected ';' after a let declaration but found '3'",
+     "hint": "insert ';' before '3'",
+     "warning": false
+    },
+    {
+     "phase": "Syntax",
+     "line": 6,
+     "col": 15,
+     "message": "expected a value but found ';'",
+     "hint": "a value is a number, string, true/false, variable or (expression)",
+     "warning": false
+    },
+    {
+     "phase": "Semantic",
+     "line": 7,
+     "col": 7,
+     "message": "'undeclared_name' is used before it is declared",
+     "hint": "add  let undeclared_name = ...;  above this line",
+     "warning": false
+    },
+    {
+     "phase": "Semantic",
+     "line": 8,
+     "col": 16,
+     "message": "'*' cannot be applied to str and int",
+     "hint": "arithmetic works on int; '+' also joins two strings",
+     "warning": false
+    },
+    {
+     "phase": "Semantic",
+     "line": 8,
+     "col": 0,
+     "message": "variable 's' is declared but never used",
+     "hint": "delete it, or use it - this is a warning, compilation continues",
+     "warning": true
+    },
+    {
+     "phase": "Semantic",
+     "line": 9,
+     "col": 0,
+     "message": "variable 'never_read' is declared but never used",
+     "hint": "delete it, or use it - this is a warning, compilation continues",
+     "warning": true
+    }
+   ],
+   "dataflow": {},
+   "loop_reports": [],
+   "passes": {}
+  },
+  {
+   "file": "09_nested_loops.nova",
+   "lines": 17,
+   "code_lines": 13,
+   "ok": true,
+   "tokens": 60,
+   "lr_ok": true,
+   "lr_steps": 206,
+   "rd_calls": 12,
+   "symbols": 5,
+   "functions": 1,
+   "sdd_events": 11,
+   "tac": 17,
+   "backpatches": 4,
+   "ir_before": 17,
+   "ir_after": 15,
+   "blocks": 9,
+   "loops": 2,
+   "phis": 7,
+   "ssa_constants": 3,
+   "spills": 0,
+   "target": 32,
+   "bytecode_raw": 40,
+   "bytecode_opt": 36,
+   "peephole": 0,
+   "verify_ok": true,
+   "verify_checks": 6,
+   "verify_pass": 6,
+   "max_stack_proved": 2,
+   "llvm_lines": 56,
+   "compile_ms": 13.319,
+   "compile_ms_p10": 10.165,
+   "compile_ms_p90": 16.947,
+   "compile_cpu_ms": 12.76,
+   "phase_ms": {
+    "1. Lexical analysis": 0.59,
+    "2. Syntax analysis": 1.404,
+    "3. Semantic analysis": 0.087,
+    "4. Intermediate code": 0.077,
+    "5-7. Optimise, data flow, code generation": 5.184,
+    "8. Bytecode verification": 0.188,
+    "Execution": 3.368
+   },
+   "json_bytes": 101922,
+   "diagnostics": [],
+   "dataflow": {
+    "main": {
+     "Reaching definitions": 3,
+     "Live variables": 4,
+     "Available expressions": 2,
+     "Very busy expressions": 1
+    }
+   },
+   "loop_reports": [
+    {
+     "function": "main",
+     "header": 4,
+     "verdict": "PARALLELISABLE AS A REDUCTION",
+     "carried": [],
+     "reductions": [
+      "total"
+     ],
+     "induction": [
+      "j"
+     ],
+     "privatisable": [
+      "t0"
+     ]
+    },
+    {
+     "function": "main",
+     "header": 1,
+     "verdict": "PARALLELISABLE AS A REDUCTION",
+     "carried": [],
+     "reductions": [
+      "total"
+     ],
+     "induction": [
+      "i",
+      "j"
+     ],
+     "privatisable": [
+      "t0"
+     ]
+    }
+   ],
+   "passes": {
+    "main": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "2 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 17,
+      "after": 17,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 17,
+      "after": 15,
+      "removed": 2,
+      "detail": "2 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 15,
+      "after": 15,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 15,
+      "after": 15,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 15,
+      "after": 15,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 15,
+      "after": 15,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ]
+   },
+   "run": {
+    "output": [
+     "18"
+    ],
+    "error": "",
+    "steps_opt": 260,
+    "steps_raw": 264,
+    "steps_reg": 223,
+    "max_frames": 1,
+    "max_stack": 2,
+    "agree": true
+   },
+   "optimiser_off": {
+    "ir": 17,
+    "bytecode": 40,
+    "steps": 264,
+    "same_output": true
+   }
+  },
+  {
+   "file": "10_strings.nova",
+   "lines": 25,
+   "code_lines": 19,
+   "ok": true,
+   "tokens": 88,
+   "lr_ok": true,
+   "lr_steps": 314,
+   "rd_calls": 17,
+   "symbols": 6,
+   "functions": 2,
+   "sdd_events": 14,
+   "tac": 29,
+   "backpatches": 11,
+   "ir_before": 29,
+   "ir_after": 25,
+   "blocks": 19,
+   "loops": 0,
+   "phis": 1,
+   "ssa_constants": 2,
+   "spills": 0,
+   "target": 50,
+   "bytecode_raw": 57,
+   "bytecode_opt": 46,
+   "peephole": 1,
+   "verify_ok": true,
+   "verify_checks": 12,
+   "verify_pass": 12,
+   "max_stack_proved": 2,
+   "llvm_lines": 94,
+   "compile_ms": 12.035,
+   "compile_ms_p10": 9.559,
+   "compile_ms_p90": 19.425,
+   "compile_cpu_ms": 10.156,
+   "phase_ms": {
+    "1. Lexical analysis": 0.785,
+    "2. Syntax analysis": 2.192,
+    "3. Semantic analysis": 0.128,
+    "4. Intermediate code": 0.135,
+    "5-7. Optimise, data flow, code generation": 7.049,
+    "8. Bytecode verification": 0.251,
+    "Execution": 0.525
+   },
+   "json_bytes": 120704,
+   "diagnostics": [],
+   "dataflow": {
+    "greet": {
+     "Reaching definitions": 2,
+     "Live variables": 2,
+     "Available expressions": 1,
+     "Very busy expressions": 1
+    },
+    "main": {
+     "Reaching definitions": 2,
+     "Live variables": 2,
+     "Available expressions": 2,
+     "Very busy expressions": 2
+    }
+   },
+   "loop_reports": [],
+   "passes": {
+    "greet": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 6,
+      "after": 6,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ],
+    "main": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 23,
+      "after": 23,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 2 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 23,
+      "after": 23,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 23,
+      "after": 23,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 23,
+      "after": 23,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 23,
+      "after": 23,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 23,
+      "after": 20,
+      "removed": 3,
+      "detail": "3 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 20,
+      "after": 20,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 20,
+      "after": 19,
+      "removed": 1,
+      "detail": "1 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 19,
+      "after": 19,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 19,
+      "after": 19,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ]
+   },
+   "run": {
+    "output": [
+     "== nova ==",
+     "hello, everyone",
+     "checks pass",
+     "many"
+    ],
+    "error": "",
+    "steps_opt": 33,
+    "steps_raw": 44,
+    "steps_reg": 37,
+    "max_frames": 2,
+    "max_stack": 2,
+    "agree": true
+   },
+   "optimiser_off": {
+    "ir": 29,
+    "bytecode": 57,
+    "steps": 44,
+    "same_output": true
+   }
+  },
+  {
+   "file": "11_deep_recursion.nova",
+   "lines": 16,
+   "code_lines": 10,
+   "ok": true,
+   "tokens": 62,
+   "lr_ok": true,
+   "lr_steps": 227,
+   "rd_calls": 11,
+   "symbols": 4,
+   "functions": 3,
+   "sdd_events": 14,
+   "tac": 23,
+   "backpatches": 4,
+   "ir_before": 23,
+   "ir_after": 23,
+   "blocks": 9,
+   "loops": 0,
+   "phis": 0,
+   "ssa_constants": 0,
+   "spills": 0,
+   "target": 47,
+   "bytecode_raw": 50,
+   "bytecode_opt": 50,
+   "peephole": 6,
+   "verify_ok": true,
+   "verify_checks": 18,
+   "verify_pass": 18,
+   "max_stack_proved": 2,
+   "llvm_lines": 84,
+   "compile_ms": 194.811,
+   "compile_ms_p10": 178.017,
+   "compile_ms_p90": 249.957,
+   "compile_cpu_ms": 186.979,
+   "phase_ms": {
+    "1. Lexical analysis": 0.566,
+    "2. Syntax analysis": 1.694,
+    "3. Semantic analysis": 0.116,
+    "4. Intermediate code": 0.097,
+    "5-7. Optimise, data flow, code generation": 6.406,
+    "8. Bytecode verification": 0.268,
+    "Execution": 181.499
+   },
+   "json_bytes": 139408,
+   "diagnostics": [],
+   "dataflow": {
+    "depth": {
+     "Reaching definitions": 2,
+     "Live variables": 2,
+     "Available expressions": 2,
+     "Very busy expressions": 2
+    },
+    "fact": {
+     "Reaching definitions": 2,
+     "Live variables": 2,
+     "Available expressions": 2,
+     "Very busy expressions": 2
+    },
+    "main": {
+     "Reaching definitions": 1,
+     "Live variables": 1,
+     "Available expressions": 1,
+     "Very busy expressions": 1
+    }
+   },
+   "loop_reports": [],
+   "passes": {
+    "depth": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ],
+    "fact": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 8,
+      "after": 8,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ],
+    "main": [
+     {
+      "name": "Local value numbering / DAG",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Global constant propagation",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 operand(s) replaced by a constant"
+     },
+     {
+      "name": "Global copy propagation",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 use(s) of a copy replaced by the original"
+     },
+     {
+      "name": "Loop-invariant code motion",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 instruction(s) hoisted into a loop preheader"
+     },
+     {
+      "name": "Strength reduction",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 multiplication(s) turned into addition, 0 induction variable(s) reduced"
+     },
+     {
+      "name": "Dead-code elimination",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     },
+     {
+      "name": "Unreachable-code elimination",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "every block is reachable"
+     },
+     {
+      "name": "Jump optimisation",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 jump(s) shortened or removed"
+     },
+     {
+      "name": "Local value numbering / DAG (2nd sweep)",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified"
+     },
+     {
+      "name": "Dead-code elimination (2nd sweep)",
+      "before": 7,
+      "after": 7,
+      "removed": 0,
+      "detail": "0 instruction(s) whose result was never used"
+     }
+    ]
+   },
+   "run": {
+    "output": [
+     "200",
+     "479001600"
+    ],
+    "error": "",
+    "steps_opt": 3609,
+    "steps_raw": 3609,
+    "steps_reg": 3188,
+    "max_frames": 202,
+    "max_stack": 2,
+    "agree": true
+   },
+   "optimiser_off": {
+    "ir": 23,
+    "bytecode": 50,
+    "steps": 3609,
+    "same_output": true
+   }
+  }
+ ],
+ "attacks": [
+  {
+   "attack": "Branch outside the code",
+   "why": "A jump whose target is past the end of the instruction array. On a real machine this is how you make execution continue into data you control.",
+   "stopped_by": "static verifier",
+   "detail": "main[2] GOTO: jump target 9999 is outside the code (0..4)",
+   "blocked": true
+  },
+  {
+   "attack": "Operand-stack underflow",
+   "why": "ADD is executed with nothing on the stack. An unchecked stack machine would read whatever memory sits below the stack.",
+   "stopped_by": "static verifier",
+   "detail": "main[0] ADD: operand stack underflow (the instruction needs a value but the stack is empty)",
+   "blocked": true
+  },
+  {
+   "attack": "Inconsistent stack depth at a merge point",
+   "why": "Two paths reach the same instruction with different stack depths, so the machine cannot know what is on the stack there. This is the property that makes bytecode verification possible at all.",
+   "stopped_by": "static verifier",
+   "detail": "main[5] PRINT: operand stack underflow (the instruction needs a value but the stack is empty)\n      main: instruction 5 is reached with stack depth 0 on one path and 1 on another - the operand stack is not consistent at this merge point",
+   "blocked": true
+  },
+  {
+   "attack": "Type confusion",
+   "why": "A string is multiplied by an integer. If the machine simply trusted the opcode, the string's internal pointer would be used as a number - the classic route to arbitrary memory access.",
+   "stopped_by": "static verifier",
+   "detail": "main[2] MUL: arithmetic on a string value",
+   "blocked": true
+  },
+  {
+   "attack": "Reading an uninitialised local",
+   "why": "Slot 1 is read before anything is ever written to it, which leaks whatever the previous call left in that stack slot.",
+   "stopped_by": "static verifier",
+   "detail": "main[0] LOAD: local slot 1 is read before it is ever written",
+   "blocked": true
+  },
+  {
+   "attack": "Escaping the activation record",
+   "why": "LOAD addresses slot 40 in a frame that only has 2 slots, reaching into the caller's frame or past the end of the stack entirely.",
+   "stopped_by": "static verifier",
+   "detail": "main[0] LOAD: slot 40 is outside the activation record (0..1)",
+   "blocked": true
+  },
+  {
+   "attack": "Denial of service: a loop that never ends",
+   "why": "This bytecode is perfectly type-safe and passes every static check. Nothing static can prove it terminates, so the *sandbox* has to stop it with an instruction budget.",
+   "stopped_by": "run-time sandbox",
+   "detail": "sandbox stopped the program: instruction budget of 200000 exhausted - the program does not terminate",
+   "blocked": true
+  },
+  {
+   "attack": "Denial of service: unbounded recursion",
+   "why": "Also statically valid. The sandbox caps the number of activation records, so the machine reports a policy violation instead of exhausting memory.",
+   "stopped_by": "run-time sandbox",
+   "detail": "sandbox stopped the program: call depth limit of 64 reached - runaway recursion in 'boom'",
+   "blocked": true
+  }
+ ],
+ "scaling": [
+  {
+   "loops": 1,
+   "lines": 7,
+   "tokens": 33,
+   "lr_steps": 117,
+   "blocks": 5,
+   "ir": 10,
+   "compile_ms": 7.819,
+   "phase_ms": {
+    "1. Lexical analysis": 0.124,
+    "2. Syntax analysis": 0.677,
+    "3. Semantic analysis": 0.099,
+    "4. Intermediate code": 0.167,
+    "5-7. Optimise, data flow, code generation": 4.885,
+    "8. Bytecode verification": 0.169,
+    "Execution": 1.329
+   },
+   "json_bytes": 58505
+  },
+  {
+   "loops": 2,
+   "lines": 14,
+   "tokens": 66,
+   "lr_steps": 231,
+   "blocks": 9,
+   "ir": 19,
+   "compile_ms": 10.603,
+   "phase_ms": {
+    "1. Lexical analysis": 0.484,
+    "2. Syntax analysis": 1.529,
+    "3. Semantic analysis": 0.087,
+    "4. Intermediate code": 0.084,
+    "5-7. Optimise, data flow, code generation": 5.54,
+    "8. Bytecode verification": 0.242,
+    "Execution": 1.682
+   },
+   "json_bytes": 100775
+  },
+  {
+   "loops": 4,
+   "lines": 28,
+   "tokens": 132,
+   "lr_steps": 459,
+   "blocks": 17,
+   "ir": 37,
+   "compile_ms": 22.796,
+   "phase_ms": {
+    "1. Lexical analysis": 0.874,
+    "2. Syntax analysis": 2.851,
+    "3. Semantic analysis": 0.142,
+    "4. Intermediate code": 0.131,
+    "5-7. Optimise, data flow, code generation": 10.582,
+    "8. Bytecode verification": 0.437,
+    "Execution": 5.603
+   },
+   "json_bytes": 199138
+  },
+  {
+   "loops": 8,
+   "lines": 56,
+   "tokens": 264,
+   "lr_steps": 915,
+   "blocks": 33,
+   "ir": 73,
+   "compile_ms": 51.06,
+   "phase_ms": {
+    "1. Lexical analysis": 1.694,
+    "2. Syntax analysis": 5.697,
+    "3. Semantic analysis": 0.252,
+    "4. Intermediate code": 0.246,
+    "5-7. Optimise, data flow, code generation": 25.405,
+    "8. Bytecode verification": 1.025,
+    "Execution": 10.684
+   },
+   "json_bytes": 386858
+  },
+  {
+   "loops": 16,
+   "lines": 112,
+   "tokens": 528,
+   "lr_steps": 1827,
+   "blocks": 65,
+   "ir": 145,
+   "compile_ms": 140.838,
+   "phase_ms": {
+    "1. Lexical analysis": 4.419,
+    "2. Syntax analysis": 18.683,
+    "3. Semantic analysis": 0.858,
+    "4. Intermediate code": 0.77,
+    "5-7. Optimise, data flow, code generation": 100.265,
+    "8. Bytecode verification": 1.888,
+    "Execution": 17.684
+   },
+   "json_bytes": 775641
+  },
+  {
+   "loops": 32,
+   "lines": 224,
+   "tokens": 1056,
+   "lr_steps": 3651,
+   "blocks": 129,
+   "ir": 289,
+   "compile_ms": 678.419,
+   "phase_ms": {
+    "1. Lexical analysis": 7.688,
+    "2. Syntax analysis": 38.896,
+    "3. Semantic analysis": 0.625,
+    "4. Intermediate code": 2.02,
+    "5-7. Optimise, data flow, code generation": 572.085,
+    "8. Bytecode verification": 5.211,
+    "Execution": 41.828
+   },
+   "json_bytes": 1636775
+  },
+  {
+   "loops": 64,
+   "lines": 448,
+   "tokens": 2112,
+   "lr_steps": 7299,
+   "blocks": 257,
+   "ir": 577,
+   "compile_ms": 5296.711,
+   "phase_ms": {
+    "1. Lexical analysis": 16.112,
+    "2. Syntax analysis": 54.21,
+    "3. Semantic analysis": 1.696,
+    "4. Intermediate code": 0.87,
+    "5-7. Optimise, data flow, code generation": 4935.193,
+    "8. Bytecode verification": 5.752,
+    "Execution": 31.326
+   },
+   "json_bytes": 3794226
+  }
+ ],
+ "robustness": {
+  "nonterminating_live": {
+   "budget": 250000,
+   "ms": 1092.611,
+   "error": "sandbox stopped the program: instruction budget of 250000 exhausted - the program does not terminate"
+  },
+  "nonterminating_run": {
+   "budget": 2000000,
+   "ms": 8748.571,
+   "error": "sandbox stopped the program: instruction budget of 2000000 exhausted - the program does not terminate"
+  },
+  "deep_nesting": {
+   "depth": 3000,
+   "ms": 20.664,
+   "diagnostic": "the program is nested too deeply for this compiler (an expression or block thousands of levels deep)"
+  },
+  "runaway_recursion": {
+   "error": "sandbox stopped the program: call depth limit of 256 reached - runaway recursion in 'f'",
+   "reg_error": "call depth limit reached in 'f'"
+  }
+ },
+ "http": {
+  "compile_roundtrip_ms": {
+   "01_hello.nova": {
+    "ms": 7.487,
+    "bytes": 34830
+   },
+   "02_fibonacci.nova": {
+    "ms": 49.214,
+    "bytes": 148242
+   },
+   "03_gcd.nova": {
+    "ms": 19.531,
+    "bytes": 103509
+   },
+   "04_primes.nova": {
+    "ms": 38.424,
+    "bytes": 174478
+   },
+   "05_optimiser.nova": {
+    "ms": 22.426,
+    "bytes": 127241
+   },
+   "06_parallel.nova": {
+    "ms": 28.528,
+    "bytes": 142759
+   },
+   "07_types_and_scopes.nova": {
+    "ms": 28.549,
+    "bytes": 145103
+   },
+   "08_broken.nova": {
+    "ms": 7.441,
+    "bytes": 26647
+   },
+   "09_nested_loops.nova": {
+    "ms": 25.077,
+    "bytes": 101946
+   },
+   "10_strings.nova": {
+    "ms": 22.273,
+    "bytes": 120729
+   },
+   "11_deep_recursion.nova": {
+    "ms": 189.131,
+    "bytes": 139434
+   }
+  },
+  "assets": {
+   "/": 7677,
+   "/studio.css": 52636,
+   "/studio.js": 116818,
+   "/api/grammar": 164061,
+   "/api/examples": 7532,
+   "/api/attacks": 2818
+  },
+  "separate_process": true,
+  "health_ms": 0.741,
+  "asset_version": "e6e784186a"
+ },
+ "tests": {
+  "total": 34,
+  "groups": {
+   "M1": 3,
+   "M2": 6,
+   "M3": 3,
+   "M4": 2,
+   "M5": 3,
+   "M6": 3,
+   "M7": 3,
+   "M8": 3,
+   "E2E": 6,
+   "WEB": 2
+  },
+  "names": [
+   "M1  regex to DFA by the direct method: (a|b)*abb has 4 states",
+   "M1  DFA minimisation merges equivalent states",
+   "M1  the scanner takes the longest match and keeps keywords apart",
+   "M2  FIRST and FOLLOW on the dragon-book expression grammar",
+   "M2  left recursion is detected and removed",
+   "M2  an ambiguous grammar really does produce shift/reduce conflicts",
+   "M2  SLR, CLR and LALR all accept the Nova grammar; LALR is the compact one",
+   "M2  the LALR parser accepts exactly what the hand-written parser accepts",
+   "M3  the type checker catches the mistakes and allows the rest",
+   "M3  an inner declaration shadows an outer one instead of overwriting it",
+   "M3  a function that is called is marked used in the symbol table",
+   "M4  booleans are compiled as jumping code, so 'and' short circuits",
+   "M4  'case' becomes a jump table and every jump gets backpatched",
+   "M5  copy propagation refuses to propagate a killed copy (the gcd trap)",
+   "M5  the optimiser really removes instructions on code written badly",
+   "M5  every data-flow analysis reaches a fixed point",
+   "M6  the register machine and the stack machine agree on every example",
+   "M6  optimised and unoptimised code produce identical output",
+   "M6  recursion builds and unwinds real activation records",
+   "M7  phi functions appear exactly where the dominance frontier says",
+   "M7  a function that opens with a loop still gets its phi functions",
+   "M7  loop dependence analysis separates parallel from sequential loops",
+   "M8  honest bytecode passes the verifier",
+   "M8  every hostile bytecode program is stopped",
+   "M8  the verifier does not reject a program merely for being unusual",
+   "E2E every example compiles, verifies, runs and prints what it should",
+   "E2E the broken example produces diagnostics from several phases at once",
+   "E2E the HTML report is generated for a real program",
+   "E2E the optimiser switch changes the code but never the answer",
+   "E2E deeply nested input is reported as a diagnostic, not a crash",
+   "E2E the sandbox's instruction budget can be set per compilation",
+   "M2  the parse-table cache adds CLR after a shallow build",
+   "WEB every example serialises to JSON for Nova Studio",
+   "WEB the studio server answers over HTTP and refuses unsafe requests"
+  ],
+  "result": "34 passed, 0 failed",
+  "exit_code": 0,
+  "seconds": 10.67
+ }
+}
