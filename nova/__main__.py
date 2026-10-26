@@ -12,6 +12,7 @@ Command line for the Nova compiler.
     python -m nova metrics  program.nova     the measurement table only
     python -m nova attack                    hostile bytecode vs the verifier
     python -m nova gui      [program.nova]   the desktop Glass-Box window
+    python -m nova serve    [--port N]       Nova Studio, the web UI, in a browser
     python -m nova test                      run the self-test suite
 """
 from __future__ import annotations
@@ -44,6 +45,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     if cmd == "gui":
         from .gui import main as gui_main
         return gui_main(args[0] if args else None)
+
+    if cmd == "serve":
+        from .server import main as serve_main
+        return serve_main(args)
 
     if cmd == "attack":
         from .attacks import text_report

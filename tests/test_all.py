@@ -392,6 +392,121 @@ def _():
             raise AssertionError(f"the report never mentions {marker}")
 
 
+@test("E2E the optimiser switch changes the code but never the answer")
+def _():
+    for name in sorted(os.listdir(EXAMPLES)):
+        if not name.endswith(".nova") or name.startswith("08"):
+            continue
+        with open(os.path.join(EXAMPLES, name), encoding="utf-8") as fh:
+            src = fh.read()
+        on = compile_source(src, name, deep_tables=False)
+        off = compile_source(src, name, deep_tables=False, optimise=False)
+        eq(off.run_opt.output, on.run_opt.output, f"{name}: output with the optimiser off")
+        for f in off.functions.values():
+            if f.opt.records or f.n_before != f.n_after:
+                raise AssertionError(f"{name}: '{f.name}' was optimised with optimise=False")
+        if off.peephole_notes:
+            raise AssertionError(f"{name}: peephole ran with optimise=False")
+
+
+@test("E2E deeply nested input is reported as a diagnostic, not a crash")
+def _():
+    for src in ("print " + "(" * 3000 + "1" + ")" * 3000 + ";",
+                "print " + " + ".join(["1"] * 5000) + ";"):
+        res = compile_source(src, "deep", deep_tables=False)
+        if res.ok or not any("nested too deeply" in e.message for e in res.errors):
+            raise AssertionError("expected a 'nested too deeply' diagnostic, got "
+                                 + res.errors.report())
+
+
+@test("E2E the sandbox's instruction budget can be set per compilation")
+def _():
+    res = compile_source("let i = 0;\nwhile true do i = i + 1; end\nprint i;", "loop",
+                         deep_tables=False, max_steps=5000)
+    if "5000" not in res.run_opt.error:
+        raise AssertionError(f"budget not applied: {res.run_opt.error!r}")
+    if not getattr(res.run_reg, "error", ""):
+        raise AssertionError("the register machine ignored the budget")
+
+
+@test("M2  the parse-table cache adds CLR after a shallow build")
+def _():
+    from nova import pipeline
+    pipeline._TABLE_CACHE.clear()          # earlier tests may have built CLR already
+    compile_source("print 1;", "shallow", deep_tables=False)
+    res = compile_source("print 1;", "deep", deep_tables=True)
+    if "CLR" not in res.tables:
+        raise AssertionError("CLR missing after a shallow build was cached")
+
+
+@test("WEB every example serialises to JSON for Nova Studio")
+def _():
+    import json
+    from nova.report_json import build_json, grammar_view
+    for name in sorted(os.listdir(EXAMPLES)):
+        if not name.endswith(".nova"):
+            continue
+        with open(os.path.join(EXAMPLES, name), encoding="utf-8") as fh:
+            res = compile_source(fh.read(), name, deep_tables=False)
+        data = json.loads(json.dumps(build_json(res)))
+        for key in ("summary", "diagnostics", "lexical", "syntax", "functions",
+                    "verifier", "metrics", "timings"):
+            if key not in data:
+                raise AssertionError(f"{name}: '{key}' missing from the JSON")
+        if res.ok and (not data["run"] or data["run"]["output"] != res.run_opt.output):
+            raise AssertionError(f"{name}: run output lost in the JSON")
+        if not res.ok and not data["diagnostics"]:
+            raise AssertionError(f"{name}: diagnostics lost in the JSON")
+    g = json.loads(json.dumps(grammar_view()))
+    if not g["first_follow"]["rows"] or not isinstance(g["ll1_conflicts"]["rows"][0], str):
+        raise AssertionError("the grammar view is malformed")
+
+
+@test("WEB the studio server answers over HTTP and refuses unsafe requests")
+def _():
+    import http.client
+    import json
+    import threading
+    from http.server import ThreadingHTTPServer
+    from nova.server import Handler
+
+    Handler.quiet = True
+    httpd = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    port = httpd.server_address[1]
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+
+    def call(method, path, body=None, headers=None):
+        c = http.client.HTTPConnection("127.0.0.1", port, timeout=60)
+        c.request(method, path, body=body, headers=headers or {})
+        r = c.getresponse()
+        data = r.read()
+        c.close()
+        return r.status, r.getheader("Content-Type") or "", data
+
+    try:
+        st, ct, page = call("GET", "/")
+        eq((st, "text/html" in ct, b"studio.js" in page), (200, True, True), "the page")
+        for path in ("/studio.css", "/studio.js", "/api/health", "/api/examples"):
+            eq(call("GET", path)[0], 200, path)
+        st, _, data = call("POST", "/api/compile",
+                           json.dumps({"source": "let x = 6;\nprint x * 7;", "mode": "run"}),
+                           {"Content-Type": "application/json"})
+        eq((st, json.loads(data)["run"]["output"]), (200, ["42"]), "compile over HTTP")
+        st, ct, data = call("POST", "/api/report", json.dumps({"source": "print 1;"}),
+                            {"Content-Type": "application/json"})
+        eq((st, "text/html" in ct, b"</html>" in data), (200, True, True), "report download")
+        eq(call("POST", "/api/compile", '{"source": "print 1;"}',
+                {"Content-Type": "text/plain"})[0], 415, "a form-style cross-site POST")
+        eq(call("GET", "/api/health", headers={"Host": "attacker.example"})[0], 403,
+           "a DNS-rebinding Host header")
+        eq(call("POST", "/api/compile", "{nope", {"Content-Type": "application/json"})[0],
+           400, "malformed JSON")
+        eq(call("GET", "/../nova/server.py")[0], 404, "path traversal")
+    finally:
+        httpd.shutdown()
+        httpd.server_close()
+
+
 # ============================================================ runner
 def run_all() -> int:
     width = max(len(n) for n, _ in _tests)

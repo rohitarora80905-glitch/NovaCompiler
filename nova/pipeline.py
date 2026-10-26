@@ -18,7 +18,7 @@ from .cfg import CFG, build_cfg, linearise
 from .codegen import CodeGenerator
 from .dataflow import (available_expressions, fmt_def, fmt_expr, live_variables,
                        reaching_definitions, very_busy_expressions)
-from .errors import ErrorBag
+from .errors import CompileError, ErrorBag
 from .grammar import Grammar
 from .lexer import Lexer, Token
 from .llvmir import LLVMEmitter
@@ -40,7 +40,10 @@ def lr_tables(g: Grammar = NOVA_GRAMMAR, deep: bool = True) -> Dict[str, LRTable
     """Build (once) the SLR / CLR / LALR tables for a grammar."""
     key = g.name
     if key in _TABLE_CACHE:
-        return _TABLE_CACHE[key]
+        out = _TABLE_CACHE[key]
+        if deep and "CLR" not in out:     # first built shallow; add CLR now
+            out["CLR"] = out["_builder"].build_clr()    # type: ignore[union-attr]
+        return out
     b = LRBuilder(g)
     out = {"SLR": b.build_slr(), "LALR": b.build_lalr()}
     if deep:
@@ -105,8 +108,29 @@ class CompileResult:
 
 
 def compile_source(src: str, path: str = "<memory>", deep_tables: bool = True,
-                   execute: bool = True, trace_limit: int = 400) -> CompileResult:
+                   execute: bool = True, trace_limit: int = 400,
+                   optimise: bool = True,
+                   max_steps: int = 2_000_000) -> CompileResult:
+    """Run every phase.  `optimise=False` skips the optimiser and the peephole
+    pass, so the unoptimised code flows all the way to the VM; `max_steps` is
+    the sandbox's instruction budget for each of the three executions."""
     res = CompileResult(source=src, path=path)
+    try:
+        _compile(res, deep_tables, execute, trace_limit, optimise, max_steps)
+    except RecursionError:
+        # A recursive-descent parser and tree walkers have a nesting limit, like
+        # every real compiler; report it as a diagnostic instead of crashing.
+        res.errors.add(CompileError(
+            "Syntax", "the program is nested too deeply for this compiler "
+                      "(an expression or block thousands of levels deep)",
+            hint="split the expression into several shorter statements"))
+        _metrics(res)
+    return res
+
+
+def _compile(res: CompileResult, deep_tables: bool, execute: bool,
+             trace_limit: int, optimise: bool, max_steps: int) -> None:
+    src = res.source
     errors = res.errors
     clock = time.perf_counter
 
@@ -137,7 +161,7 @@ def compile_source(src: str, path: str = "<memory>", deep_tables: bool = True,
 
     if not res.ok:
         _metrics(res)
-        return res
+        return
 
     # ------------------------------------------- Module 4: intermediate code
     t0 = clock()
@@ -168,15 +192,17 @@ def compile_source(src: str, path: str = "<memory>", deep_tables: bool = True,
 
         cfg1 = build_cfg(irf.code, irf.params)
         o = Optimizer(cfg1, irf.params)
-        cfg1 = o.run_all()
+        if optimise:
+            cfg1 = o.run_all()
         ssa = to_ssa(cfg1, irf.params)
         loops = par.analyse(cfg1)
         cg = CodeGenerator(cfg1, name, irf.params)
         cg.generate()
 
         fn = gopt.gen_function(cfg1, name, irf.params, irf.ret_type != "void")
-        fn, notes = peephole(fn)
-        res.peephole_notes += [f"{name}: {n}" for n in notes]
+        if optimise:
+            fn, notes = peephole(fn)
+            res.peephole_notes += [f"{name}: {n}" for n in notes]
         opt.functions[name] = fn
 
         rprog.code[name] = cg.code
@@ -203,20 +229,19 @@ def compile_source(src: str, path: str = "<memory>", deep_tables: bool = True,
         t0 = clock()
         slot_names = {n: _slot_names(res.functions[n]) for n in res.functions}
         if res.verify_ok:
-            res.run_opt = VM(opt, trace_limit=trace_limit,
+            res.run_opt = VM(opt, max_steps=max_steps, trace_limit=trace_limit,
                              slot_names=slot_names).run()
         else:
             res.run_opt = RunResult(error="refused to run: the verifier rejected "
                                           "this bytecode")
-        res.run_raw = VM(raw, trace_limit=0).run()
-        res.run_reg = run_regvm(rprog)
+        res.run_raw = VM(raw, max_steps=max_steps, trace_limit=0).run()
+        res.run_reg = run_regvm(rprog, max_steps=max_steps)
         res.timings["Execution"] = clock() - t0
 
     em = LLVMEmitter()
     res.llvm = em.emit_program(llvm_input)
 
     _metrics(res)
-    return res
 
 
 def _slot_names(art: FuncArtifacts) -> List[str]:

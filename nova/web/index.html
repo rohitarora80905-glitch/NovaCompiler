@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#070708">
+<title>Nova Studio</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/studio.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ============================================================ top bar -->
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <defs>
+          <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ffb35c"/><stop offset=".5" stop-color="#ff7a1a"/>
+            <stop offset="1" stop-color="#e2470b"/>
+          </linearGradient>
+        </defs>
+        <rect x="1" y="1" width="30" height="30" rx="8" fill="#121214" stroke="url(#bm)" stroke-width="1.4"/>
+        <path d="M16 5.5c.9 5.6 3.9 8.6 9.5 9.5-5.6.9-8.6 3.9-9.5 9.5-.9-5.6-3.9-8.6-9.5-9.5 5.6-.9 8.6-3.9 9.5-9.5z" fill="url(#bm)"/>
+      </svg>
+      <div class="brand-text">
+        <span class="brand-name">Nova <b>Studio</b></span>
+        <span class="brand-sub">Glass-box compiler</span>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="select-wrap" title="Load an example program">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h10"/></svg>
+        <select id="example" aria-label="Example program"></select>
+      </div>
+      <button class="btn ghost" id="btn-open" title="Open a .nova file (Ctrl+O)">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span>Open</span>
+      </button>
+      <input type="file" id="file" accept=".nova,.txt" hidden>
+      <div class="divider"></div>
+      <label class="switch" title="Recompile as you type">
+        <input type="checkbox" id="live" checked><span class="track"><span class="thumb"></span></span>
+        <span class="switch-label">Live</span>
+      </label>
+      <label class="switch" title="Run the eight optimisation passes and the peephole pass">
+        <input type="checkbox" id="optimise" checked><span class="track"><span class="thumb"></span></span>
+        <span class="switch-label">Optimiser</span>
+      </label>
+      <div class="divider"></div>
+      <button class="btn ghost" id="btn-report" title="Download the full HTML report (Ctrl+S)">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>
+        <span>Report</span>
+      </button>
+      <button class="btn primary" id="btn-run" title="Compile and run with the full instruction budget (Ctrl+Enter)">
+        <svg class="ico fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>
+        <span>Run</span>
+        <kbd>Ctrl ↵</kbd>
+      </button>
+    </div>
+  </header>
+
+  <!-- ======================================================= pipeline rail -->
+  <nav class="rail" id="rail" aria-label="Compiler pipeline"></nav>
+
+  <!-- ========================================================== workspace -->
+  <main class="workspace" id="workspace">
+    <section class="pane editor-pane" id="editor-pane" aria-label="Source editor">
+      <div class="pane-head">
+        <div class="file-tab">
+          <span class="dot" id="dirty-dot"></span>
+          <span id="file-name">untitled.nova</span>
+        </div>
+        <div class="pane-actions">
+          <button class="icon-btn" id="btn-copy-src" title="Copy source">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+          </button>
+          <button class="icon-btn" id="btn-reset" title="Reload the selected example">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="editor" id="editor">
+        <div class="gutter" id="gutter" aria-hidden="true"></div>
+        <div class="code-area">
+          <div class="decor" id="decor" aria-hidden="true"></div>
+          <pre class="highlight" id="highlight" aria-hidden="true"></pre>
+          <textarea id="source" spellcheck="false" autocomplete="off" autocapitalize="off"
+                    wrap="off" aria-label="Nova source code"></textarea>
+        </div>
+        <div class="drop-hint" id="drop-hint">Drop a .nova file to open it</div>
+      </div>
+      <div class="hsplit" id="hsplit" role="separator" aria-orientation="horizontal" title="Drag to resize"></div>
+      <div class="dock" id="dock">
+        <div class="dock-tabs" role="tablist">
+          <button class="dock-tab on" data-dock="output" role="tab">Output</button>
+          <button class="dock-tab" data-dock="problems" role="tab">Problems <span class="count" id="problem-count">0</span></button>
+          <span class="dock-meta" id="dock-meta"></span>
+        </div>
+        <div class="dock-body" id="dock-output"></div>
+        <div class="dock-body" id="dock-problems" hidden></div>
+      </div>
+    </section>
+
+    <div class="vsplit" id="vsplit" role="separator" aria-orientation="vertical" title="Drag to resize"></div>
+
+    <section class="pane inspector" aria-label="Compiler inspector">
+      <div class="tabs" id="tabs" role="tablist"></div>
+      <div class="fn-bar" id="fn-bar" hidden></div>
+      <div class="view" id="view" tabindex="-1"></div>
+    </section>
+  </main>
+
+  <!-- ========================================================= status bar -->
+  <footer class="statusbar">
+    <span class="sb-item"><span class="led" id="led"></span><span id="sb-server">connecting…</span></span>
+    <span class="sb-item" id="sb-time"></span>
+    <span class="sb-item" id="sb-budget"></span>
+    <span class="sb-spacer"></span>
+    <span class="sb-item" id="sb-cursor">Ln 1, Col 1</span>
+    <span class="sb-item muted">Nova · UTF-8</span>
+    <button class="sb-item sb-btn" id="btn-keys" title="Keyboard shortcuts">?</button>
+  </footer>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<div class="modal" id="keys-modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="keys-title">
+    <h3 id="keys-title">Keyboard shortcuts</h3>
+    <dl class="keys">
+      <dt><kbd>Ctrl</kbd> <kbd>Enter</kbd></dt><dd>Compile and run with the full budget</dd>
+      <dt><kbd>Ctrl</kbd> <kbd>S</kbd></dt><dd>Download the HTML report</dd>
+      <dt><kbd>Ctrl</kbd> <kbd>O</kbd></dt><dd>Open a .nova file</dd>
+      <dt><kbd>Ctrl</kbd> <kbd>/</kbd></dt><dd>Comment or uncomment the line</dd>
+      <dt><kbd>Tab</kbd> / <kbd>Shift</kbd> <kbd>Tab</kbd></dt><dd>Indent / outdent</dd>
+      <dt><kbd>Alt</kbd> <kbd>1</kbd>…<kbd>9</kbd></dt><dd>Jump to a compiler phase</dd>
+      <dt><kbd>Esc</kbd></dt><dd>Close this panel</dd>
+    </dl>
+    <button class="btn ghost" id="keys-close">Close</button>
+  </div>
+</div>
+
+<script src="/studio.js"></script>
+</body>
+</html>
