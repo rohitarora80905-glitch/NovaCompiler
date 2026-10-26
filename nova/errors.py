@@ -19,9 +19,15 @@ class CompileError:
     col: int = 0
     hint: Optional[str] = None
 
+    @property
+    def is_warning(self) -> bool:
+        """Unused declarations are reported but do not stop compilation."""
+        return "never used" in self.message
+
     def __str__(self) -> str:
         where = f"line {self.line}, col {self.col}" if self.line else "-"
-        base = f"[{self.phase} error] {where}: {self.message}"
+        kind = "warning" if self.is_warning else "error"
+        base = f"[{self.phase} {kind}] {where}: {self.message}"
         return base + (f"\n    hint: {self.hint}" if self.hint else "")
 
 

@@ -1,0 +1,17 @@
+
+Diagnostics
+==============================
+[Lexical error] line 5, col 13: unexpected character '@'
+    hint: delete it, or put it inside a string literal
+[Syntax error] line 5, col 15: expected ';' after a let declaration but found '3'
+    hint: insert ';' before '3'
+[Syntax error] line 6, col 15: expected a value but found ';'
+    hint: a value is a number, string, true/false, variable or (expression)
+[Semantic error] line 7, col 7: 'undeclared_name' is used before it is declared
+    hint: add  let undeclared_name = ...;  above this line
+[Semantic error] line 8, col 16: '*' cannot be applied to str and int
+    hint: arithmetic works on int; '+' also joins two strings
+[Semantic warning] line 8, col 0: variable 's' is declared but never used
+    hint: delete it, or use it - this is a warning, compilation continues
+[Semantic warning] line 9, col 0: variable 'never_read' is declared but never used
+    hint: delete it, or use it - this is a warning, compilation continues

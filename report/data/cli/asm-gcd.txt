@@ -1,0 +1,76 @@
+
+gcd: activation record
+==============================
+    -2  return address   set by CALL
+    -1  control link (caller's FP) set by CALL
+     0  a                parameter
+     1  b                parameter
+     2  t                local
+
+gcd: target code
+==============================
+  0  B0:   LD     R0, [fp+1]           ; load b
+  1        LDI    R1, #0               ; literal 0
+  2        JGT    R0, R1, 4            ; conditional jump
+  3  B1:   JMP    11                   
+  4  B2:   LD     R0, [fp+1]           ; load b
+  5        MOV    R1, R0               ; t = b
+  6        LD     R2, [fp+0]           ; load a
+  7        MOD    R2, R2, R0           ; b = a % b
+  8        ST     [fp+0], R1           ; save a
+  9        ST     [fp+1], R2           ; save b
+ 10        JMP    0                    
+ 11  B3:   LD     R0, [fp+0]           ; load a
+ 12        RET    R0                   ; value in R0 by convention
+
+lcm: activation record
+==============================
+    -2  return address   set by CALL
+    -1  control link (caller's FP) set by CALL
+     0  a                parameter
+     1  b                parameter
+     2  t0               temporary
+     3  t1               temporary
+     4  t2               temporary
+
+lcm: target code
+==============================
+  0  B0:   LD     R0, [fp+0]           ; load a
+  1        PARAM  R0                   ; argument a
+  2        LD     R1, [fp+1]           ; load b
+  3        PARAM  R1                   ; argument b
+  4        CALL   gcd, 2               ; push a new activation record
+  5        ST     [fp+2], R0           ; t0 = returned value
+  6        LD     R0, [fp+0]           ; load a
+  7        LD     R1, [fp+2]           ; load t0
+  8        DIV    R0, R0, R1           ; t1 = a / t0
+  9        LD     R2, [fp+1]           ; load b
+ 10        MUL    R0, R0, R2           ; t2 = t1 * b
+ 11        RET    R0                   ; value in R0 by convention
+
+main: activation record
+==============================
+    -2  return address   set by CALL
+    -1  control link (caller's FP) set by CALL
+     0  t0               temporary
+     1  t1               temporary
+
+main: target code
+==============================
+  0  B0:   LDI    R0, #1071            ; literal 1071
+  1        PARAM  R0                   ; argument 1071
+  2        LDI    R1, #462             ; literal 462
+  3        PARAM  R1                   ; argument 462
+  4        CALL   gcd, 2               ; push a new activation record
+  5        ST     [fp+0], R0           ; t0 = returned value
+  6        LD     R0, [fp+0]           ; load t0
+  7        PRINT  R0                   
+  8        LDI    R1, #21              ; literal 21
+  9        PARAM  R1                   ; argument 21
+ 10        LDI    R2, #6               ; literal 6
+ 11        PARAM  R2                   ; argument 6
+ 12        CALL   lcm, 2               ; push a new activation record
+ 13        ST     [fp+1], R0           ; t1 = returned value
+ 14        LD     R0, [fp+1]           ; load t1
+ 15        PRINT  R0                   
+ 16        RET                         

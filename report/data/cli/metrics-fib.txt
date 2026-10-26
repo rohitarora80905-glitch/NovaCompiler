@@ -1,0 +1,33 @@
+
+Measurements
+==============================
+  Module 1   Token patterns (extended regular expressions)              41
+  Module 1   Positions in the combined syntax tree                      147
+  Module 1   DFA states before minimisation                             92
+  Module 1   DFA states after minimisation                              92
+  Module 1   Symbol equivalence classes (DFA columns)                   37
+  Module 1   Tokens produced                                            84
+  Module 2   Grammar productions                                        58
+  Module 2   Terminals / non-terminals                                  39 / 20
+  Module 2   SLR states / table entries / conflicts                     116 / 1229 / 0
+  Module 2   CLR states / table entries / conflicts                     478 / 4790 / 0
+  Module 2   LALR states / table entries / conflicts                    116 / 1214 / 0
+  Module 2   Bottom-up parse of this program                            accepted
+  Module 2   LR parser steps                                            297
+  Module 3   Symbol-table entries                                       4
+  Module 3   Functions declared                                         2
+  Module 3   Attribute-flow events recorded                             14
+  Module 4   Three-address instructions                                 28
+  Module 4   Backpatch operations                                       6
+  Module 5   IR instructions before / after optimisation                28 / 28  (0% smaller)
+  Module 5   Basic blocks                                               13
+  Module 5   Natural loops found                                        1
+  Module 6   Target instructions (register machine)                     61
+  Module 6   Register spills                                            0
+  Module 7   Phi functions inserted for SSA                             3
+  Module 7   Loops that could run in parallel                           1
+  Module 6   Bytecode instructions before / after optimisation          60 / 60
+  Module 8   Bytecode verification                                      PASSED
+  Module 8   Maximum operand-stack depth proved                         2
+  Runtime    VM instructions executed, unoptimised / optimised          4074 / 4074  (0% fewer)
+  Runtime    Deepest activation-record stack                            10

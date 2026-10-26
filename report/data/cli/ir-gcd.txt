@@ -1,0 +1,113 @@
+
+gcd: three-address code
+==============================
+  0  L0    if b > 0 goto L1
+  1        goto L2
+  2  L1    t = b
+  3        b = a % b
+  4        a = t
+  5        goto L0
+  6  L2    return a
+
+gcd: optimisation
+==============================
+  Local value numbering / DAG                   7 -> 7    0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified
+  Global constant propagation                   7 -> 7    0 operand(s) replaced by a constant
+  Global copy propagation                       7 -> 7    0 use(s) of a copy replaced by the original
+  Loop-invariant code motion                    7 -> 7    0 instruction(s) hoisted into a loop preheader
+  Strength reduction                            7 -> 7    0 multiplication(s) turned into addition, 0 induction variable(s) reduced
+  Dead-code elimination                         7 -> 7    0 instruction(s) whose result was never used
+  Unreachable-code elimination                  7 -> 7    every block is reachable
+  Jump optimisation                             7 -> 7    0 jump(s) shortened or removed
+  Local value numbering / DAG (2nd sweep)       7 -> 7    0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified
+  Dead-code elimination (2nd sweep)             7 -> 7    0 instruction(s) whose result was never used
+
+gcd: optimised flow graph
+==============================
+B0   preds: B2   succs: B2, B1
+      if b > 0 goto B2
+
+B1   preds: B0   succs: B3
+      goto B3
+
+B2   preds: B0   succs: B0
+      t = b
+      b = a % b
+      a = t
+      goto B0
+
+B3   preds: B1   succs: -
+      return a
+
+
+lcm: three-address code
+==============================
+  0        param a
+  1        param b
+  2        t0 = call gcd, 2
+  3        t1 = a / t0
+  4        t2 = t1 * b
+  5        return t2
+
+lcm: optimisation
+==============================
+  Local value numbering / DAG                   6 -> 6    0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified
+  Global constant propagation                   6 -> 6    0 operand(s) replaced by a constant
+  Global copy propagation                       6 -> 6    0 use(s) of a copy replaced by the original
+  Loop-invariant code motion                    6 -> 6    0 instruction(s) hoisted into a loop preheader
+  Strength reduction                            6 -> 6    0 multiplication(s) turned into addition, 0 induction variable(s) reduced
+  Dead-code elimination                         6 -> 6    0 instruction(s) whose result was never used
+  Unreachable-code elimination                  6 -> 6    every block is reachable
+  Jump optimisation                             6 -> 6    0 jump(s) shortened or removed
+  Local value numbering / DAG (2nd sweep)       6 -> 6    0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified
+  Dead-code elimination (2nd sweep)             6 -> 6    0 instruction(s) whose result was never used
+
+lcm: optimised flow graph
+==============================
+B0   preds: -   succs: -
+      param a
+      param b
+      t0 = call gcd, 2
+      t1 = a / t0
+      t2 = t1 * b
+      return t2
+
+
+main: three-address code
+==============================
+  0        param 1071
+  1        param 462
+  2        t0 = call gcd, 2
+  3        print t0
+  4        param 21
+  5        param 6
+  6        t1 = call lcm, 2
+  7        print t1
+  8        return
+
+main: optimisation
+==============================
+  Local value numbering / DAG                   9 -> 9    0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified
+  Global constant propagation                   9 -> 9    0 operand(s) replaced by a constant
+  Global copy propagation                       9 -> 9    0 use(s) of a copy replaced by the original
+  Loop-invariant code motion                    9 -> 9    0 instruction(s) hoisted into a loop preheader
+  Strength reduction                            9 -> 9    0 multiplication(s) turned into addition, 0 induction variable(s) reduced
+  Dead-code elimination                         9 -> 9    0 instruction(s) whose result was never used
+  Unreachable-code elimination                  9 -> 9    every block is reachable
+  Jump optimisation                             9 -> 9    0 jump(s) shortened or removed
+  Local value numbering / DAG (2nd sweep)       9 -> 9    0 common sub-expression(s) reused, 0 constant(s) folded, 0 algebraic identity(ies) simplified
+  Dead-code elimination (2nd sweep)             9 -> 9    0 instruction(s) whose result was never used
+
+main: optimised flow graph
+==============================
+B0   preds: -   succs: -
+      param 1071
+      param 462
+      t0 = call gcd, 2
+      print t0
+      param 21
+      param 6
+      t1 = call lcm, 2
+      print t1
+      return
+

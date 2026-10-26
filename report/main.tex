@@ -60,30 +60,43 @@
   numbers=left, numberstyle=\tiny\color{black!45}, numbersep=6pt,
   xleftmargin=1.6em, frame=tb, framesep=3pt, rulecolor=\color{black!35},
   aboveskip=2pt, belowskip=0pt}
+% terminal output of the compiler, included verbatim from report/data/cli
+\lstdefinelanguage{plain}{}
+\definecolor{lstbreak}{gray}{0.55}
+\lstdefinestyle{term}{language=plain, basicstyle=\scriptsize\ttfamily, columns=fullflexible,
+  keepspaces=true, numbers=none, xleftmargin=0pt, breaklines=true,
+  breakatwhitespace=false, postbreak=\mbox{\textcolor{lstbreak}{$\hookrightarrow$}\ },
+  frame=single, framesep=3pt, rulecolor=\color{black!30}, backgroundcolor=\color{black!3},
+  aboveskip=2pt, belowskip=0pt}
 
 \begin{document}
 
 \title{Nova: A Glass-Box Compiler with Verified Bytecode and an Interactive Studio for Compiler Education}
 
-%% >>> AUTHORS: replace every bracketed field below (add or remove \and blocks
-%%     for the number of authors; up to six fit this layout).
-\author{\IEEEauthorblockN{[Author Name 1]}
-\IEEEauthorblockA{\textit{[Department Name]} \\
-\textit{[Institution Name]}\\
-{[City], [Country]} \\
-{[email address]}}
+%% >>> AUTHORS: the three students and the faculty guide of the project.
+\author{\IEEEauthorblockN{Harvi Bhavin Patel}
+\IEEEauthorblockA{\textit{School of Computer Science and Engineering} \\
+\textit{Vellore Institute of Technology}\\
+{Vellore, India} \\
+{Reg.\ No.\ 24BCE2557}}
 \and
-\IEEEauthorblockN{[Author Name 2]}
-\IEEEauthorblockA{\textit{[Department Name]} \\
-\textit{[Institution Name]}\\
-{[City], [Country]} \\
-{[email address]}}
+\IEEEauthorblockN{Srishti Saluja}
+\IEEEauthorblockA{\textit{School of Computer Science and Engineering} \\
+\textit{Vellore Institute of Technology}\\
+{Vellore, India} \\
+{Reg.\ No.\ 24BCE2587}}
 \and
-\IEEEauthorblockN{[Author Name 3]}
-\IEEEauthorblockA{\textit{[Department Name]} \\
-\textit{[Institution Name]}\\
-{[City], [Country]} \\
-{[email address]}}
+\IEEEauthorblockN{Nainika Pathak}
+\IEEEauthorblockA{\textit{School of Computer Science and Engineering} \\
+\textit{Vellore Institute of Technology}\\
+{Vellore, India} \\
+{Reg.\ No.\ 24BCE0230}}
+\and
+\IEEEauthorblockN{Dr.\ Hariharan R L}
+\IEEEauthorblockA{\textit{Assistant Professor Senior Grade 1} \\
+\textit{Centre for Artificial Intelligence Research}\\
+\textit{Vellore Institute of Technology}, Vellore, India \\
+{hariharan.rl@vit.ac.in}}
 }
 
 \maketitle
@@ -341,7 +354,7 @@ Each of the 41 token patterns is an extended regular expression. The patterns ar
 \end{equation}
 DFA states are sets of positions: the start state is $\mathit{firstpos}(\mathit{root})$, and the transition on input class $a$ from state $S$ is the union of $\mathit{followpos}(p)$ over the positions $p \in S$ that carry $a$. A state that contains several end markers accepts the token with the lowest index, which is how keywords take priority over identifiers. Characters that behave identically are grouped into 37 equivalence classes, which become the DFA's columns. The automaton is minimised by Moore's partition refinement~\cite{moore1956}, starting from one block per token kind plus one for non-accepting states.
 
-Scanning simulates the minimised DFA with the maximal-munch rule: the scanner keeps reading while a transition exists, remembers the last accepting state it passed, and when it is stuck gives back whatever it read beyond that point. Python's \code{re} module is never imported. Each token records the list of DFA states it walked through and how many characters were read ahead and returned, which is what the studio's \emph{scanner trace} draws (Fig.~\ref{fig:scanner}): the chain of states for the chosen token, the character on every edge, the accepting token of every accepting state, and the final state highlighted. Fig.~\ref{fig:lexical} shows the summary view and the token stream, and Fig.~\ref{fig:dfatable} the minimised automaton itself.
+Scanning simulates the minimised DFA with the maximal-munch rule: the scanner keeps reading while a transition exists, remembers the last accepting state it passed, and when it is stuck gives back whatever it read beyond that point. Python's \code{re} module is never imported. Each token records the list of DFA states it walked through and how many characters were read ahead and returned, which is what the studio's \emph{scanner trace} draws (Fig.~\ref{fig:scanner}): the chain of states for the chosen token, the character on every edge, the accepting token of every accepting state, and the final state highlighted. Fig.~\ref{fig:lexical} shows the summary view and the token stream, and Fig.~\ref{fig:dfatable} the minimised automaton itself. The inputs to that construction are inspectable too: the 41 extended regular expressions in priority order (Fig.~\ref{fig:tokenspecs}) and the followpos table that the direct method computes from them (Fig.~\ref{fig:followpos}); and so is its output, the token table with each token's position and attribute value (Fig.~\ref{fig:tokentable}). The followpos rows for the keyword \code{let} (positions 7--10) show the mechanism in miniature: each letter's only follower is the next letter, and the follower of the final \code{t} (position 9) is the end marker \code{\#LET} at position 10, which is what makes the DFA state reached after \code{let} accept the token \code{LET}.
 
 \begin{figure}[!t]
 \centering
@@ -365,9 +378,30 @@ Scanning simulates the minimised DFA with the maximal-munch rule: the scanner ke
 \label{fig:dfatable}
 \end{figure}
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.92\columnwidth]{figures/token-specs.png}
+\caption{The token specification as the studio lists it: the first 24 of the 41 extended regular expressions, in priority order. Whitespace and comments come first, then the 19 keywords, each a literal string, and only then the general patterns for numbers, strings and identifiers, so that a keyword wins any tie with \code{IDENT}.}
+\label{fig:tokenspecs}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.92\columnwidth]{figures/followpos.png}
+\caption{The followpos table of the direct method, positions 1--26 of 147. Positions 1 and 2 are the two character classes of the whitespace pattern, each followed by both of them (the Kleene star) and by the end marker \code{\#WS} at position 3; the keywords \code{let}, \code{if}, \code{then} and \code{else} are chains of single letters ending in their end markers.}
+\label{fig:followpos}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.92\columnwidth]{figures/token-table.png}
+\caption{The token table of the Fibonacci program, first 18 of 84 tokens: kind, lexeme, line, column and the attribute the scanner attaches---the value of a number, the text of a string, or a pointer to the symbol table for an identifier.}
+\label{fig:tokentable}
+\end{figure}
+
 \subsection{Syntax Analysis}
 \label{sec:syntax}
-\emph{Grammar analysis.} The grammar module computes FIRST and FOLLOW sets and the LL(1) table and explains every conflict. It then applies left-recursion elimination ($A \to A\alpha \mid \beta$ becomes $A \to \beta A'$, $A' \to \alpha A' \mid \varepsilon$) and left factoring, and re-checks the table. The Nova grammar is written left-recursively to obtain left-associative operators, so it is deliberately not LL(1); Section~\ref{sec:res-front} quantifies this, and Fig.~\ref{fig:ll1} shows the explanations.
+\emph{Grammar analysis.} The grammar module computes FIRST and FOLLOW sets and the LL(1) table and explains every conflict. It then applies left-recursion elimination ($A \to A\alpha \mid \beta$ becomes $A \to \beta A'$, $A' \to \alpha A' \mid \varepsilon$) and left factoring, and re-checks the table. The Nova grammar is written left-recursively to obtain left-associative operators, so it is deliberately not LL(1); Section~\ref{sec:res-front} quantifies this, and Fig.~\ref{fig:ll1} shows the explanations. FIRST and FOLLOW sets for all 20 non-terminals are tabulated (Fig.~\ref{fig:firstfollow}), and the left-recursion elimination reports, non-terminal by non-terminal, how many left-recursive productions it rewrote (Fig.~\ref{fig:leftrec}): eleven non-terminals are affected, eighteen productions in all, with \code{rel} contributing four and \code{term} three.
 
 \emph{LR tables.} From the same grammar, the LR module builds the canonical collection of LR(0) items and derives the SLR(1) table from it, using FOLLOW sets for reductions. It builds the canonical collection of LR(1) items $[A \to \alpha \cdot \beta,\ a]$ for the CLR(1) table, and builds the LALR(1) table by merging LR(1) states that share an LR(0) core:
 \begin{equation}
@@ -376,11 +410,11 @@ I^{\mathrm{LALR}}_{K} = \bigcup \{\, I \in \mathcal{C}_{\mathrm{LR}(1)} \;:\; \m
 \end{equation}
 Conflicts are not merely detected but explained: the module names the colliding actions, the look-ahead and the responsible productions. A deliberately ambiguous five-production expression grammar demonstrates genuine shift/reduce conflicts (Fig.~\ref{fig:ambiguous}).
 
-\emph{The automaton, browsable.} The studio exposes the LALR(1) automaton directly (Fig.~\ref{fig:automaton}). For any of the 116 states it lists the items, with kernel items in bold and the merged look-ahead sets in braces, and beside them the ACTION entries (shift, with the target state linked; reduce, with the production; accept) and the GOTO entries. The ACTION/GOTO table itself can be paged through eighteen states at a time (Fig.~\ref{fig:lrtable}); only the columns that are used in the window are shown, so the sparsity of the table is visible. Because the automaton depends only on the language, it is computed once when the server starts and served to the browser as a 160\,KB JSON document that is fetched a single time.
+\emph{The automaton, browsable.} The studio exposes the LALR(1) automaton directly (Fig.~\ref{fig:automaton}). For any of the 116 states it lists the items, with kernel items in bold and the merged look-ahead sets in braces, and beside them the ACTION entries (shift, with the target state linked; reduce, with the production; accept) and the GOTO entries. The ACTION/GOTO table itself can be paged through eighteen states at a time (Fig.~\ref{fig:lrtable}); only the columns that are used in the window are shown, so the sparsity of the table is visible. State 26 (Fig.~\ref{fig:lrstate26}) shows the classic decision that LR parsing makes with one token of look-ahead. After an identifier inside an expression, a left parenthesis means a call, so it is shifted; any of the 19 other terminals that may follow an expression means the identifier was a variable, so production 52 of the augmented grammar, \code{factor $\to$ IDENT}, is reduced. No other state needs to know which of the two the identifier was. Because the automaton depends only on the language, it is computed once when the server starts and served to the browser as a 160\,KB JSON document that is fetched a single time.
 
-\emph{Two parsers, one language.} The abstract syntax tree (AST) used by later phases is built by a hand-written recursive-descent parser with one token of look-ahead, a precedence-climbing expression chain and panic-mode recovery. On an error the parser skips to the next token that can start a statement, or to \code{end}, \code{else}, \code{when} or \code{otherwise}, so that one missing semicolon does not cause a cascade of errors. Independently, a table-driven LALR(1) driver parses the same token stream and records the state stack, the symbol stack, the remaining input and the action at every step. Agreement between the two parsers is a self-test. Fig.~\ref{fig:syntax} shows the three tables measured on the grammar and Fig.~\ref{fig:lrtrace} the complete trace.
+\emph{Two parsers, one language.} The abstract syntax tree (AST) used by later phases is built by a hand-written recursive-descent parser with one token of look-ahead, a precedence-climbing expression chain and panic-mode recovery. On an error the parser skips to the next token that can start a statement, or to \code{end}, \code{else}, \code{when} or \code{otherwise}, so that one missing semicolon does not cause a cascade of errors. Independently, a table-driven LALR(1) driver parses the same token stream and records the state stack, the symbol stack, the remaining input and the action at every step. Agreement between the two parsers is a self-test. The recursive-descent parser's own call trace, with the look-ahead token that chose each procedure, is shown beside it (Fig.~\ref{fig:rdtrace}); for the Fibonacci program it makes 15 procedure calls where the LALR(1) driver takes 297 actions, because one call consumes a whole statement while the driver shifts and reduces symbol by symbol. Fig.~\ref{fig:syntax} shows the three tables measured on the grammar and Fig.~\ref{fig:lrtrace} the complete trace.
 
-\emph{The parse player.} The trace is also replayed by a player (Fig.~\ref{fig:player}). At any step it shows the state stack with its top highlighted, the symbol stack with the handle about to be reduced marked, the remaining input as a tape with the look-ahead first, the action taken, and the kernel items of the current state, so a learner can see \emph{why} the table says shift or reduce. The player steps forward and back, scrubs, and autoplays at 420\,ms per action; the space bar and the arrow keys drive it when it has focus.
+\emph{The parse player.} The trace is also replayed by a player (Fig.~\ref{fig:player}). At any step it shows the state stack with its top highlighted, the symbol stack with the handle about to be reduced marked, the remaining input as a tape with the look-ahead first, the action taken, and the kernel items of the current state, so a learner can see \emph{why} the table says shift or reduce. The player steps forward and back, scrubs, and autoplays at 420\,ms per action; the space bar and the arrow keys drive it when it has focus. At the last step (Fig.~\ref{fig:playeraccept}) the stacks have been reduced to state 1 with the single symbol \code{program}, the input is exhausted, and the kernel item \code{program$'$ $\to$ program $\bullet$} licenses \code{accept}.
 
 \begin{figure}[!t]
 \centering
@@ -431,6 +465,41 @@ Conflicts are not merely detected but explained: the module names the colliding 
 \label{fig:ambiguous}
 \end{figure}
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.92\columnwidth]{figures/first-follow.png}
+\caption{FIRST and FOLLOW sets of the first 14 of the 20 non-terminals. \code{decls}, \code{params}, \code{stmts} and \code{args} can be empty, so their FIRST sets include $\varepsilon$; the FOLLOW set of \code{stmts} contains exactly the tokens that may end a block (\code{END}, \code{ELSE}, \code{WHEN}, \code{OTHERWISE}) together with every statement-starting token.}
+\label{fig:firstfollow}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{figures/left-recursion.png}
+\caption{The left-recursion elimination log: eleven non-terminals each receive a primed companion, \code{A$'$}, into which their left-recursive productions are rewritten. The operator chain from \code{expr} to \code{term} accounts for thirteen of the eighteen rewritten productions.}
+\label{fig:leftrec}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{figures/rd-trace.png}
+\caption{The top-down derivation of the Fibonacci program by the recursive-descent parser: one line per procedure call, indented by nesting depth, with the look-ahead token that selected the procedure. The \code{case} statement calls \code{print\_stmt} once for each arm.}
+\label{fig:rdtrace}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{figures/lr-state-26.png}
+\caption{State 26 of the LALR(1) automaton, reached after an \code{IDENT} inside an expression. The two kernel items share the prefix \code{IDENT}; the look-ahead decides between them: \code{LPAREN} is shifted (a call), and the 19 terminals that can follow an expression reduce \code{factor $\to$ IDENT} (a variable).}
+\label{fig:lrstate26}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{figures/parse-player-accept.png}
+\caption{The parse player at its last step, 297: the state stack is \code{0 1}, the symbol stack holds only \code{program}, the remaining input is the end marker, and the kernel item of state 1 explains the \code{accept} action.}
+\label{fig:playeraccept}
+\end{figure}
+
 \subsection{Semantic Analysis}
 Semantic analysis is a single L-attributed pass over the AST, preceded by a pass that collects function signatures so that calls may precede declarations. \emph{Inherited} attributes flow downwards: the current scope, the nesting depth, the enclosing function and the type the context expects. \emph{Synthesised} attributes flow upwards: the type of every expression. Each symbol records its name, kind, type, scope, depth, frame slot, declaring line and whether it is used. The type rules are as follows:
 \begin{itemize}
@@ -438,7 +507,7 @@ Semantic analysis is a single L-attributed pass over the AST, preceded by a pass
 \item relational operators produce $\mathit{bool}$, and \code{and}/\code{or}/\code{not} require $\mathit{bool}$;
 \item every condition must be $\mathit{bool}$, and every argument must be $\mathit{int}$.
 \end{itemize}
-A poisoned $\langle\mathit{error}\rangle$ type suppresses cascades. Unused variables produce warnings rather than errors. Every attribute flow is logged per construct (Fig.~\ref{fig:semantic}), and the annotated tree is drawn (Fig.~\ref{fig:ast}): each node carries the type the checker synthesised for it, and the drawing can be switched between the functions and the statements of the main program. The layout is a simplified Reingold--Tilford tree layout~\cite{reingold1981}: subtrees are measured bottom-up, placed left to right without overlap, and every parent is centred over its children.
+A poisoned $\langle\mathit{error}\rangle$ type suppresses cascades. Unused variables produce warnings rather than errors. Every attribute flow is logged per construct (Fig.~\ref{fig:semantic}), and the annotated tree is drawn (Fig.~\ref{fig:ast}): each node carries the type the checker synthesised for it, and the drawing can be switched between the functions and the statements of the main program. Fig.~\ref{fig:astcase} shows the \code{case} statement of the same program: the selector \code{total} synthesises \code{int}, each arm prints a string literal of type \code{str}, and the arms carry no type of their own because statements do not synthesise one. The layout is a simplified Reingold--Tilford tree layout~\cite{reingold1981}: subtrees are measured bottom-up, placed left to right without overlap, and every parent is centred over its children.
 
 \begin{figure}[!t]
 \centering
@@ -456,8 +525,15 @@ A poisoned $\langle\mathit{error}\rangle$ type suppresses cascades. Unused varia
 \label{fig:ast}
 \end{figure*}
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{figures/ast-case.png}
+\caption{The \code{case} statement of the Fibonacci program as an annotated tree: the selector \code{total : int}, the arms \code{when 0} and \code{when 88}, and the \code{otherwise} arm, each holding a \code{print} of a string literal.}
+\label{fig:astcase}
+\end{figure}
+
 \subsection{Intermediate-Code Generation}
-Three-address code is generated as quadruples (\emph{op}, \emph{arg$_1$}, \emph{arg$_2$}, \emph{result}) by a syntax-directed translation scheme. Boolean expressions are compiled as \emph{jumping code} with true and false lists, so \code{a and b} never evaluates \code{b} when \code{a} is false. Jump targets that are unknown when a jump is emitted are left blank and filled in by \code{makelist}, \code{merge} and \code{backpatch}~\cite{aho2006}, and every backpatch is logged (Fig.~\ref{fig:backpatch}). A \code{case} statement is lowered to a genuine jump table (\code{jtab}) with a default target rather than to a chain of comparisons (Fig.~\ref{fig:tac}).
+Three-address code is generated as quadruples (\emph{op}, \emph{arg$_1$}, \emph{arg$_2$}, \emph{result}) by a syntax-directed translation scheme. Boolean expressions are compiled as \emph{jumping code} with true and false lists, so \code{a and b} never evaluates \code{b} when \code{a} is false. Jump targets that are unknown when a jump is emitted are left blank and filled in by \code{makelist}, \code{merge} and \code{backpatch}~\cite{aho2006}, and every backpatch is logged (Fig.~\ref{fig:backpatch}). A \code{case} statement is lowered to a genuine jump table (\code{jtab}) with a default target rather than to a chain of comparisons (Fig.~\ref{fig:tac}). Fig.~\ref{fig:tacprimes} shows short-circuit evaluation of \code{isprime(n) == 1 and n > 1} in \code{04\_primes.nova}: the call and the first comparison are emitted as instructions 5--7; only when that comparison holds does control reach the test \code{n > 1} at \code{L2}, and both false exits jump to \code{L4}, past the body. No boolean value is ever materialised: the truth of the condition is represented entirely by where control goes.
 
 \begin{figure}[!t]
 \centering
@@ -473,6 +549,13 @@ Three-address code is generated as quadruples (\emph{op}, \emph{arg$_1$}, \emph{
 \label{fig:backpatch}
 \end{figure}
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{figures/tac-primes.png}
+\caption{Three-address code for the main program of \code{04\_primes.nova}. The condition \code{isprime(n) == 1 and n > 1} becomes two conditional jumps (instructions 7 and 9) whose false exits share the target \code{L4}: the jumping code of a short-circuit \code{and}.}
+\label{fig:tacprimes}
+\end{figure}
+
 \subsection{Control Flow and Optimisation}
 Leaders (the first instruction, every jump target and every instruction after a jump) delimit basic blocks, and the blocks form the control-flow graph (CFG). Inside the CFG every jump names a \emph{block} rather than an instruction index, so a pass may insert or delete instructions without invalidating jumps. Dominators are computed by iterative set intersection, immediate dominators are derived from them, and every back edge $n \to h$ with $h~\mathrm{dom}~n$ defines a natural loop. The optimiser runs eight passes in a fixed order and then repeats the first and the sixth as clean-up sweeps:
 \begin{enumerate}
@@ -485,7 +568,7 @@ Leaders (the first instruction, every jump target and every instruction after a 
 \item unreachable-code elimination; and
 \item jump optimisation.
 \end{enumerate}
-Each pass records the instruction count before and after it and the code it produced, which the studio plots as a waterfall (Fig.~\ref{fig:optimiser}). Flow graphs are drawn before and after optimisation (Fig.~\ref{fig:cfg}) in a layered layout in the manner of Sugiyama~\cite{sugiyama1981}: blocks are assigned to layers breadth-first from the entry, forward edges are cubic B\'ezier curves, and back edges are routed outside the blocks as dashed orange curves. The DAG of any block is drawn as well (Fig.~\ref{fig:dag}): leaves at the bottom, operators above their operands, each node annotated with the variables that hold its value, and nodes with more than one parent---the common subexpressions---outlined in orange.
+Each pass records the instruction count before and after it and the code it produced, which the studio plots as a waterfall (Fig.~\ref{fig:optimiser}). Flow graphs are drawn before and after optimisation (Fig.~\ref{fig:cfg}) in a layered layout in the manner of Sugiyama~\cite{sugiyama1981}: blocks are assigned to layers breadth-first from the entry, forward edges are cubic B\'ezier curves, and back edges are routed outside the blocks as dashed orange curves. The DAG of any block is drawn as well (Fig.~\ref{fig:dag}): leaves at the bottom, operators above their operands, each node annotated with the variables that hold its value, and nodes with more than one parent---the common subexpressions---outlined in orange. Fig.~\ref{fig:cfgprimes} shows a larger graph, \code{isprime} in \code{04\_primes.nova}, with eleven blocks: an early \code{return} for $n<2$, a loop whose header tests $d \cdot d \le n$, a second early \code{return} inside the loop body when a divisor is found, and the final \code{return 1}.
 
 \begin{figure}[!t]
 \centering
@@ -510,6 +593,13 @@ Each pass records the instruction count before and after it and the code it prod
 \label{fig:dag}
 \end{figure}
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.8\columnwidth]{figures/cfg-primes.png}
+\caption{The optimised flow graph of \code{isprime}: eleven blocks, three of them exits. The loop is headed by \code{B4} (the test $d \cdot d \le n$); its body \code{B6} contains the divisibility test whose true branch leaves the loop through the early \code{return} in \code{B8}, and the back edge from \code{B9} increments \code{d}.}
+\label{fig:cfgprimes}
+\end{figure}
+
 \subsection{Data-Flow Analysis}
 Four classical analyses are solved over the CFG in the monotone framework of Kildall~\cite{kildall1973}. With $\wedge$ the meet operator and $f_B$ the transfer function of block $B$, a forward analysis computes
 \begin{equation}
@@ -521,7 +611,7 @@ and a backward analysis computes
 \mathit{OUT}[B] = \bigwedge_{S \in \mathrm{succ}(B)} \mathit{IN}[S],\ \ \mathit{IN}[B] = f_B(\mathit{OUT}[B]),
 \label{eq:backward}
 \end{equation}
-with the instances listed in Table~\ref{tab:dataflow}. Reaching definitions drive constant and copy propagation, live variables drive dead-code elimination and register allocation, available expressions support global common-subexpression elimination, and very busy expressions justify code hoisting. Each analysis is solved by round-robin iteration over the blocks until no IN or OUT set changes, and a snapshot of every round is kept, so the convergence itself can be inspected (Fig.~\ref{fig:dataflow}). The studio also writes the final IN and OUT sets of the chosen analysis into the blocks of the flow graph (Fig.~\ref{fig:dfoverlay}), which places each fact next to the code it is a fact about.
+with the instances listed in Table~\ref{tab:dataflow}. Reaching definitions drive constant and copy propagation, live variables drive dead-code elimination and register allocation, available expressions support global common-subexpression elimination, and very busy expressions justify code hoisting. Each analysis is solved by round-robin iteration over the blocks until no IN or OUT set changes, and a snapshot of every round is kept, so the convergence itself can be inspected (Fig.~\ref{fig:dataflow}). The studio also writes the final IN and OUT sets of the chosen analysis into the blocks of the flow graph (Fig.~\ref{fig:dfoverlay}), which places each fact next to the code it is a fact about. Figs.~\ref{fig:dfreaching} and~\ref{fig:dfavailable} show two further analyses on \code{main} of \code{05\_optimiser.nova}. In reaching definitions each definition is named by its variable and its position---\code{acc@B0.6} is the definition of \code{acc} at instruction 6 of \code{B0}---and the sets at the loop header contain the definitions from both the entry block and the loop body, because the meet is union. Available expressions behaves the opposite way: the loop body computes \code{width*height}, \code{i+1} and the other expressions, so they are available at its exit, but at the header they are intersected with the entry path, which has computed none of them, and only \code{99*3} survives.
 
 \begin{table}[!t]
 \caption{The Four Data-Flow Analyses}
@@ -555,13 +645,27 @@ Very busy expressions & backward & $\cap$ & $\mathit{euse}_B \cup (x - \mathit{e
 \label{fig:dataflow}
 \end{figure}
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.92\columnwidth]{figures/df-reaching.png}
+\caption{Reaching definitions on the flow graph of \code{main} in \code{05\_optimiser.nova} before optimisation. Every definition in \code{B0} and \code{B3} reaches the loop header \code{B1}, so the facts at \code{B1}, \code{B2} and \code{B4} name definitions from both blocks; the studio truncates long sets with an ellipsis and shows them in full in the table below the graph.}
+\label{fig:dfreaching}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.82\columnwidth]{figures/df-available.png}
+\caption{Available expressions on the same graph. The loop body \code{B3} makes \code{acc+dup}, \code{i+1}, \code{t0+scaled}, \code{width*height} and others available at its exit, but the meet at the loop header is intersection with the entry path, so only \code{99*3}, computed in \code{B0}, is available on every path into \code{B1}.}
+\label{fig:dfavailable}
+\end{figure}
+
 \subsection{Code Generation and Register Allocation}
 The register code generator implements the textbook simple code generator over four general-purpose registers. A backward scan of each block computes, for every instruction, the next use and liveness of each name, starting from the block's live-out set. The register-selection routine \code{getreg} chooses, in order: an empty register; a register whose value is dead; or a register to spill, chosen by Belady's rule~\cite{belady1966},
 \begin{equation}
 r^{*} = \arg\max_{r}\ \mathit{nextuse}\bigl(v(r)\bigr),
 \label{eq:belady}
 \end{equation}
-where $v(r)$ is the value held in register $r$. A register descriptor (what each register holds) and an address descriptor (where each value lives) are recorded after every instruction (Fig.~\ref{fig:regdec}), and values that are live at a block's exit are stored to their slots in the activation record, so that blocks can be generated independently. The activation record holds the return address at offset $-2$, the control link at $-1$, then parameters, locals and temporaries (Fig.~\ref{fig:codegen}). A register-machine simulator executes the generated code, which turns the code listing into a working back-end. The studio turns the register descriptors into a timeline (Fig.~\ref{fig:timeline}): one row per register, one column per instruction, a coloured run for every interval during which a value occupies a register, so that the allocator's reuse of registers and its spills can be read at a glance.
+where $v(r)$ is the value held in register $r$. A register descriptor (what each register holds) and an address descriptor (where each value lives) are recorded after every instruction (Fig.~\ref{fig:regdec}), and values that are live at a block's exit are stored to their slots in the activation record, so that blocks can be generated independently. The activation record holds the return address at offset $-2$, the control link at $-1$, then parameters, locals and temporaries (Fig.~\ref{fig:codegen}). A register-machine simulator executes the generated code, which turns the code listing into a working back-end. The studio turns the register descriptors into a timeline (Fig.~\ref{fig:timeline}): one row per register, one column per instruction, a coloured run for every interval during which a value occupies a register, so that the allocator's reuse of registers and its spills can be read at a glance. The next-use table (Fig.~\ref{fig:nextuse}) is the input to those decisions: for each instruction it lists, for every name involved, the index of its next use within the block or \code{live-out} when the value survives the block, and the set of names that are live after the instruction.
 
 \begin{figure*}[!t]
 \centering
@@ -584,13 +688,20 @@ where $v(r)$ is the value held in register $r$. A register descriptor (what each
 \label{fig:regdec}
 \end{figure*}
 
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.94\textwidth]{figures/nextuse.png}
+\caption{Next-use information for \code{main} of \code{05\_optimiser.nova}, the first 14 instructions. Each row gives the instruction, the next use of every name it touches (an instruction index within the block, \code{live-out}, or \code{dead}) and the names live after it; \code{getreg} spills the register whose value has the most distant next use.}
+\label{fig:nextuse}
+\end{figure*}
+
 \subsection{SSA Construction and Parallelism}
 SSA form is built by the method of Cytron~\emph{et~al.}~\cite{cytron1991}. The dominance frontier of block $n$ is
 \begin{equation}
 \mathrm{DF}(n)=\{\,y \mid \exists p\in\mathrm{pred}(y): n~\mathrm{dom}~p \;\wedge\; \neg(n~\mathrm{sdom}~y)\,\},
 \label{eq:df}
 \end{equation}
-computed by walking up the dominator tree from the predecessors of each join block. The entry block is treated as having an extra, implicit predecessor---the function's start---so a loop that begins at the very first instruction is still recognised as a join (Section~\ref{sec:res-defects}). $\phi$-functions are placed on the iterated dominance frontier of each variable's definition sites, and variables are renamed in a pre-order walk of the dominator tree using one version stack per variable (Fig.~\ref{fig:ssa}). The dominator tree itself is drawn, with each block's dominance frontier beside it (Fig.~\ref{fig:domtree}).
+computed by walking up the dominator tree from the predecessors of each join block. The entry block is treated as having an extra, implicit predecessor---the function's start---so a loop that begins at the very first instruction is still recognised as a join (Section~\ref{sec:res-defects}). $\phi$-functions are placed on the iterated dominance frontier of each variable's definition sites, and variables are renamed in a pre-order walk of the dominator tree using one version stack per variable (Fig.~\ref{fig:ssa}). The dominator tree itself is drawn, with each block's dominance frontier beside it (Fig.~\ref{fig:domtree}). Fig.~\ref{fig:ssaprimes} shows the SSA form of \code{isprime}: its loop header \code{B4} receives three $\phi$-functions, for \code{d} and for the two temporaries that the loop body redefines. Fig.~\ref{fig:domparallel} shows the dominator tree of \code{main} in \code{06\_parallel.nova}: a chain through the three loop headers \code{B1}, \code{B5} and \code{B9}, each of which is in its own dominance frontier and in that of its loop body (\code{B3}, \code{B7}, \code{B11}).
 
 For every natural loop, the dependence analyser computes four sets of variables:
 \begin{itemize}
@@ -613,6 +724,20 @@ A loop with $C - R = \emptyset$ and $R = \emptyset$ is \emph{vectorisable}; one 
 \includegraphics[width=0.62\columnwidth]{figures/dom-tree.png}
 \caption{The dominator tree of \code{isprime} in \code{04\_primes.nova}. The loop header \code{B4} dominates the whole loop and is in its own dominance frontier; the blocks inside the loop that can reach the header again (\code{B6}, \code{B7}, \code{B9}) have \code{B4} in their frontier too, which is why the $\phi$-functions for \code{d} and the temporaries are placed in \code{B4}.}
 \label{fig:domtree}
+\end{figure}
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/ssa-primes.png}
+\caption{SSA view of \code{isprime} in \code{04\_primes.nova}: the dominator table with each block's immediate dominator and dominance frontier (left), and the renamed code (right). The three $\phi$-functions in \code{B4} merge the values of \code{d}, \code{t0} and \code{t1} arriving from \code{B3} (first iteration) and \code{B9} (back edge).}
+\label{fig:ssaprimes}
+\end{figure*}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.62\columnwidth]{figures/dom-parallel.png}
+\caption{The dominator tree of \code{main} in \code{06\_parallel.nova}. The three loops are dominated in sequence; each loop header (\code{B1}, \code{B5}, \code{B9}) is in its own dominance frontier and in that of its loop body (\code{B3}, \code{B7}, \code{B11}), which is where the $\phi$-functions of each loop are placed.}
+\label{fig:domparallel}
 \end{figure}
 
 \begin{figure}[!t]
@@ -674,7 +799,7 @@ A peephole pass~\cite{mckeeman1965} rewrites \code{STORE x; LOAD x} as \code{DUP
 
 \emph{Sandboxed execution.} The VM refuses unverified code. A call pushes a frame holding the callee's locals, its operand stack, the return address and a control link to the caller's frame. Execution runs under hard limits of 2,000,000 instructions, 256 frames and 1,024 operand-stack entries, so a non-terminating or runaway program is reported as a policy violation instead of hanging the tool. The VM records the first 400 steps as a trace---each step with its function, program counter, instruction, operand stack, call depth and the locals of the current frame---and keeps a snapshot of the activation-record stack at its deepest (Figs.~\ref{fig:verifier} and~\ref{fig:execution}). A hostile-bytecode suite of eight hand-written programs, discussed in Section~\ref{sec:res-security}, exercises the verifier and the sandbox together.
 
-\emph{The VM stepper.} The studio replays the trace as a stepper (Fig.~\ref{fig:stepper}): the bytecode of the current function with the program counter highlighted, the operand stack top first, the locals of the current frame by name, the call depth against the deepest reached, and the output produced so far. It steps, scrubs and autoplays at 260\,ms per instruction, and answers the same keys as the parse player.
+\emph{The VM stepper.} The studio replays the trace as a stepper (Fig.~\ref{fig:stepper}): the bytecode of the current function with the program counter highlighted, the operand stack top first, the locals of the current frame by name, the call depth against the deepest reached, and the output produced so far. It steps, scrubs and autoplays at 260\,ms per instruction, and answers the same keys as the parse player. Fig.~\ref{fig:stepperstrings} shows the stepper at the last instruction of \code{10\_strings.nova}, after the \code{SWITCH} of the \code{case} statement has taken its default branch: all four lines of output have appeared, and the locals hold \code{count = 3} and \code{ok = 1}, the run-time representation of \code{true}.
 
 \emph{LLVM IR.} A third back-end prints textual LLVM IR in the style of \code{clang -O0}: every variable becomes an \code{alloca}, and reads and writes become \code{load} and \code{store} (Fig.~\ref{fig:llvm}). LLVM's \code{mem2reg} pass would produce the same SSA form that Nova builds itself. The output needs no LLVM installation, but anyone who has \code{clang} can compile it to native code.
 
@@ -697,6 +822,13 @@ A peephole pass~\cite{mckeeman1965} rewrites \code{STORE x; LOAD x} as \code{DUP
 \includegraphics[width=\columnwidth]{figures/llvm-ir.png}
 \caption{The textual LLVM IR for the Fibonacci program: every Nova variable is an \code{alloca} slot, every read a \code{load} and every write a \code{store}, exactly as \code{clang -O0} would emit it.}
 \label{fig:llvm}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{figures/vm-stepper-strings.png}
+\caption{The VM stepper at the final instruction of \code{10\_strings.nova}. The \code{SWITCH} at instruction 24 compiles the \code{case} statement; its default target 31 printed \code{many}. All four output lines are visible, and the frame's locals are \code{count = 3} and \code{ok = 1}.}
+\label{fig:stepperstrings}
 \end{figure}
 
 \subsection{Nova Studio}
@@ -788,6 +920,8 @@ Syllabus map & all & see each module's requirement, implementation and numbers \
 \item downloads of the HTML report and of the compile JSON;
 \item keyboard shortcuts (Fig.~\ref{fig:keys}), and a layout that adapts down to a 390-pixel-wide phone screen (Fig.~\ref{fig:mobile}).
 \end{itemize}
+The pipeline rail (Fig.~\ref{fig:rail}) is the studio's summary of a compilation: one card per stage with a tick, a cross or a dash for passed, failed and skipped, and the stage's cost. Live compilation is shown at work in Fig.~\ref{fig:liveerror}: a loop typed with two semantic errors---a string added to an integer and a misspelt variable---is reported 0.85\,ms later, the rail marks semantic analysis as failed and every later stage as skipped, and the gutter and the problems panel point at lines 3 and 5. Clicking a problem moves the caret to its position and flashes the line (Fig.~\ref{fig:editorproblems}). The overview's own panels---the per-phase timing and the comparison of the three back-ends---are shown at full size in Fig.~\ref{fig:panels}, and the metrics view ends with the phase timings and the buttons that export the compilation (Fig.~\ref{fig:metricstimings}).
+
 
 \begin{figure*}[!t]
 \centering
@@ -812,6 +946,43 @@ Syllabus map & all & see each module's requirement, implementation and numbers \
 \label{fig:mobile}
 \end{figure}
 
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{figures/pipeline-rail.png}
+\caption{The pipeline rail for the Fibonacci program: lexer, parser, semantic analysis, three-address code, optimiser, code generator, SSA, verifier and execution, each with its status and cost. Code generation and SSA run inside the same timed region as the optimiser and are reported as such.}
+\label{fig:rail}
+\end{figure*}
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{figures/live-error.png}
+\caption{Live compilation catching two semantic errors as they are typed. Semantic analysis is marked failed and the later stages skipped; the summary, the gutter and the problems panel all point at line 3 (\code{'+' cannot be applied to int and str}) and line 5 (\code{'totl' is used before it is declared}), each with a hint. The status bar shows the live budget of 250,000 instructions.}
+\label{fig:liveerror}
+\end{figure*}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.88\columnwidth]{figures/editor-problems.png}
+\caption{The editor and problems panel on \code{08\_broken.nova}. Error lines are marked red in the gutter and the warning line amber; each problem gives its phase, position, message and hint, and clicking one moves the caret to it.}
+\label{fig:editorproblems}
+\end{figure}
+
+\begin{figure*}[!t]
+\centering
+\subfloat[Time per phase for the Fibonacci program, the bar lengths proportional to the cost of each phase]{\includegraphics[width=0.41\textwidth]{figures/phase-times.png}\label{fig:panels-a}}
+\hfil
+\subfloat[The three back-ends on \code{03\_gcd.nova}: optimised and unoptimised stack bytecode (100 steps each) and the register machine (91 steps) all print \code{21 | 42}]{\includegraphics[width=0.41\textwidth]{figures/backends-gcd.png}\label{fig:panels-b}}
+\caption{Two panels of the overview at full size.}
+\label{fig:panels}
+\end{figure*}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.8\columnwidth]{figures/metrics-timings.png}
+\caption{The end of the metrics view: the time of every phase of the current compilation in milliseconds, and the buttons that download the complete compile JSON or copy a link that carries the whole program.}
+\label{fig:metricstimings}
+\end{figure}
+
 \emph{Security model.} A development server on \code{localhost} can be reached by any web page that the user visits. Nova Studio therefore applies six controls:
 \begin{itemize}
 \item it binds to the loopback interface;
@@ -821,6 +992,91 @@ Syllabus map & all & see each module's requirement, implementation and numbers \
 \item it sends a restrictive Content Security Policy~\cite{csp3} and \code{nosniff} headers;
 \item it versions its assets by content hash, so browsers never execute stale code.
 \end{itemize}
+
+\subsection{Command-Line Interface and a Worked Example}
+\label{sec:cli}
+Every artefact is also available without a browser. The command-line interface (Table~\ref{tab:cli}) prints one phase, or all of them, for a source file; the self-test and the hostile-bytecode demonstration run from the same entry point. We follow \code{03\_gcd.nova} (Fig.~\ref{fig:gcdsrc}) through it. The program defines Euclid's algorithm and a least-common-multiple function that calls it, and prints $\gcd(1071, 462) = 21$ and $\mathrm{lcm}(21, 6) = 42$ (Fig.~\ref{fig:clirun}).
+
+\begin{table}[!t]
+\caption{Command-Line Interface (\code{python -m nova \ldots})}
+\label{tab:cli}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}l L{5.0cm}@{}}
+\toprule
+Command & Prints \\
+\midrule
+\code{run} \emph{file} & compile, verify and execute; the program's output \\
+\code{phases} \emph{file} & every phase, in order \\
+\code{tokens} \emph{file} & DFA statistics and the token stream \\
+\code{ir} \emph{file} & TAC, the pass-by-pass optimisation and the flow graph \\
+\code{asm} \emph{file} & activation records and register-machine code \\
+\code{bytecode} \emph{file} & stack bytecode and the verifier's report \\
+\code{llvm} \emph{file} & textual LLVM IR \\
+\code{metrics} \emph{file} & the measurement table \\
+\code{report} \emph{file} & writes the self-contained HTML report \\
+\code{gui} [\emph{file}] & opens the desktop viewer \\
+\code{serve} [\code{--port} $N$] & starts Nova Studio \\
+\code{attack} & hostile bytecode against verifier and sandbox \\
+\code{test} & the 34-test self-check \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[!t]
+\lstinputlisting[firstline=4]{data/cli/src-gcd.txt}
+\caption{\code{03\_gcd.nova}: Euclid's algorithm with a loop at the very start of \code{gcd}, and \code{lcm} calling it, so that two activation records are live at once.}
+\label{fig:gcdsrc}
+\end{figure}
+
+\begin{figure}[!t]
+\lstinputlisting[style=term]{data/cli/run-gcd.txt}
+\caption{\code{python -m nova run examples/03\_gcd.nova}: the program's output, produced by the verified optimised bytecode.}
+\label{fig:clirun}
+\end{figure}
+
+\emph{Three-address code and optimisation.} \code{nova ir} prints the TAC of each function, the ten pass records and the optimised flow graph (Fig.~\ref{fig:cliir}). The loop of \code{gcd} is seven quadruples; it contains no redundancy, so every pass reports zero changes---the same result as Table~\ref{tab:onoff}---and the flow graph has four blocks, with \code{B0} both the entry and the loop header.
+
+\emph{Register-machine code.} \code{nova asm} prints each function's activation record and the code produced by the next-use allocator (Fig.~\ref{fig:cliasm}). In \code{gcd}, \code{b} is loaded into \code{R0} once per iteration, the copy \code{t = b} becomes a register move, the remainder is computed in place in \code{R2}, and the two live values are stored back to the frame before the jump to the header, because every block is generated independently.
+
+\emph{Bytecode and verification.} \code{nova bytecode} prints the stack code and then the verifier's report (Fig.~\ref{fig:clibc}): fifteen instructions for \code{gcd}, and six properties proved for each of its three functions, with a maximum stack depth of two everywhere.
+
+\emph{Diagnostics.} On \code{08\_broken.nova} the same command prints all seven diagnostics with their phase, position and hint, and labels the two unused-variable reports as warnings rather than errors (Fig.~\ref{fig:clibroken}). The labelling was itself corrected during this work: the command line had printed every diagnostic as an error, while the studio and the HTML report distinguished warnings.
+
+\emph{Attacks and self-test.} \code{nova attack} hands the eight hostile programs to the verifier and the VM and prints what stopped each (Fig.~\ref{fig:cliattack}); \code{nova test} runs the 34 self-tests, whose complete output is reproduced in Appendix~\ref{app:tests}.
+
+\begin{figure}[!t]
+\lstinputlisting[style=term, firstline=1, lastline=41]{data/cli/ir-gcd.txt}
+\caption{\code{python -m nova ir} on \code{03\_gcd.nova}, the part for \code{gcd}: the three-address code, the ten pass records (none changes the code) and the optimised flow graph.}
+\label{fig:cliir}
+\end{figure}
+
+\begin{figure}[!t]
+\lstinputlisting[style=term, firstline=1, lastline=23]{data/cli/asm-gcd.txt}
+\caption{\code{python -m nova asm} on \code{03\_gcd.nova}, the part for \code{gcd}: the activation record (return address, control link, two parameters and a local) and thirteen register-machine instructions with the allocator's comments.}
+\label{fig:cliasm}
+\end{figure}
+
+\begin{figure}[!t]
+\lstinputlisting[style=term, firstline=1, lastline=20]{data/cli/bytecode-gcd.txt}
+\vspace{2pt}
+\lstinputlisting[style=term, firstline=54, lastline=62]{data/cli/bytecode-gcd.txt}
+\caption{\code{python -m nova bytecode} on \code{03\_gcd.nova}: the stack bytecode of \code{gcd} (top) and the verifier's report for it (bottom). The full output continues with \code{lcm} and \code{main}, which are also verified.}
+\label{fig:clibc}
+\end{figure}
+
+\begin{figure}[!t]
+\lstinputlisting[style=term]{data/cli/run-broken.txt}
+\caption{\code{python -m nova run} on \code{08\_broken.nova}: five errors and two warnings from three phases in one run, each with a hint.}
+\label{fig:clibroken}
+\end{figure}
+
+\begin{figure}[!t]
+\lstinputlisting[style=term, firstline=30, lastline=45]{data/cli/attack.txt}
+\caption{The end of \code{python -m nova attack}: attacks 6--8 and the summary. The frame escape is rejected statically; the two denials of service pass verification and are stopped by the sandbox.}
+\label{fig:cliattack}
+\end{figure}
 
 \subsection{Evaluation Methodology}
 \label{sec:evalmethod}
@@ -1075,7 +1331,7 @@ Program / function & RD & LV & AE & VB \\
 
 \subsection{Code Generation and Back-End Agreement}
 \label{sec:res-backends}
-Table~\ref{tab:backends} reports the three executions of each program. On every benchmark the unoptimised stack VM, the optimised stack VM and the register machine print identical output, which is the differential check of correctness~\cite{mckeeman1998}. A single spill occurs in the whole suite (in \code{optimiser}), so four registers suffice for these programs; the timeline of Fig.~\ref{fig:timeline} shows why, since at most four values are live at once and constants occupy a register for a single instruction. The register machine executes 6--25\% fewer instructions than the optimised stack VM on nine of the ten programs, because it keeps values in registers instead of pushing and popping them. The exception is \code{types} (87 against 85 instructions), where the code generator stores live values back at block boundaries and the stack code needs no such stores. The recursive \code{fibonacci} reaches a depth of ten activation records, which Fig.~\ref{fig:execution} shows frame by frame, and \code{recursion} reaches 202 (Fig.~\ref{fig:deeprec}).
+Table~\ref{tab:backends} reports the three executions of each program. On every benchmark the unoptimised stack VM, the optimised stack VM and the register machine print identical output, which is the differential check of correctness~\cite{mckeeman1998}. Fig.~\ref{fig:gcdoverview} shows the check as the studio presents it for \code{gcd}: the summary records that the verifier passed and that all three back-ends agree, and Fig.~\ref{fig:panels-b} lists the three executions side by side. A single spill occurs in the whole suite (in \code{optimiser}), so four registers suffice for these programs; the timeline of Fig.~\ref{fig:timeline} shows why, since at most four values are live at once and constants occupy a register for a single instruction. The register machine executes 6--25\% fewer instructions than the optimised stack VM on nine of the ten programs, because it keeps values in registers instead of pushing and popping them. The exception is \code{types} (87 against 85 instructions), where the code generator stores live values back at block boundaries and the stack code needs no such stores. The recursive \code{fibonacci} reaches a depth of ten activation records, which Fig.~\ref{fig:execution} shows frame by frame, and \code{recursion} reaches 202 (Fig.~\ref{fig:deeprec}).
 
 \begin{table}[!t]
 \caption{Execution on the Three Back-Ends}
@@ -1131,12 +1387,19 @@ Program & unopt. & opt. & steps & frames & stack & Agree \\
 \label{fig:deeprec}
 \end{figure}
 
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/overview-gcd.png}
+\caption{The overview of \code{03\_gcd.nova}: 68 tokens, 22 IR instructions (no redundancy to remove), 43 bytecode instructions, 100 VM steps, a call depth of three, eighteen properties proved and one loop with three $\phi$-functions---the ones restored by the fix to defect D6.}
+\label{fig:gcdoverview}
+\end{figure*}
+
 \subsection{SSA and Parallelism}
 The suite contains eleven natural loops. The dependence analyser classifies two as vectorisable (in \code{isprime} and the first loop of \code{parallel}), six as reductions (the accumulators \code{total}, \code{sum}, \code{acc} and \code{b}, and both loops of \code{nested}, which accumulate \code{total}) and three as sequential (\code{gcd}'s Euclidean step, the recurrence on \code{c} in \code{parallel} and the countdown on \code{n} in \code{types}). Each verdict matches a manual analysis of the loop, and Fig.~\ref{fig:loops} shows how three syntactically similar loops in \code{parallel} receive three different verdicts---the distinction a vectoriser must make before transforming anything~\cite{allen2001}. For the nested pair (Fig.~\ref{fig:nested}) the analyser additionally reports the nesting depth and recommends interchange and tiling, the two transformations Kennedy and McKinley~\cite{kennedy1993} use to improve locality. The 39 $\phi$-functions follow the iterated dominance frontiers exactly; the dominator tree of \code{isprime} (Fig.~\ref{fig:domtree}) shows the frontier $\{\code{B4}\}$ on every block that can re-enter the loop header, which is where its nine $\phi$-functions go. For \code{gcd}, whose loop header is its entry block, Fig.~\ref{fig:ssa} shows the $\phi$-functions that a defect previously suppressed (Section~\ref{sec:res-defects}).
 
 \subsection{Verification and Security}
 \label{sec:res-security}
-All 114 property checks on the honest programs pass (Fig.~\ref{fig:verifier}), and verification is cheap: 0.054--0.480\,ms per program, under 3\% of compile time. Table~\ref{tab:attacks} reports the hostile suite, which reuses the same verifier and VM with tighter run-time limits of 200,000 instructions and 64 frames. All eight attacks are stopped. Six are memory- or type-safety violations that the verifier rejects before execution, each named by the property it violates (Fig.~\ref{fig:security}). The last two are well typed and therefore pass verification; they are denials of service, which no static check can decide in general, and the sandbox stops them at run time (Fig.~\ref{fig:sandbox}). This is the division of labour between validation and resource limits that WebAssembly and eBPF also adopt~\cite{haas2017,gershuni2019}.
+All 114 property checks on the honest programs pass (Fig.~\ref{fig:verifier}), and verification is cheap: 0.054--0.480\,ms per program, under 3\% of compile time. Table~\ref{tab:attacks} reports the hostile suite, which reuses the same verifier and VM with tighter run-time limits of 200,000 instructions and 64 frames. All eight attacks are stopped. Six are memory- or type-safety violations that the verifier rejects before execution, each named by the property it violates (Fig.~\ref{fig:security}). The last two are well typed and therefore pass verification; they are denials of service, which no static check can decide in general, and the sandbox stops them at run time (Fig.~\ref{fig:sandbox}). The middle of the suite (Fig.~\ref{fig:secmiddle}) shows two attacks that a naive stack machine would execute silently: multiplying a string by an integer, and reading a local slot that was never written. This is the division of labour between validation and resource limits that WebAssembly and eBPF also adopt~\cite{haas2017,gershuni2019}.
 
 \begin{table}[!t]
 \caption{Hostile Bytecode Suite}
@@ -1179,6 +1442,13 @@ All 114 property checks on the honest programs pass (Fig.~\ref{fig:verifier}), a
 \includegraphics[width=0.92\columnwidth]{figures/security-sandbox.png}
 \caption{The last three attacks. The frame-escaping \code{LOAD} is rejected statically; the non-terminating loop and the unbounded recursion pass every static check and are stopped by the sandbox's instruction budget and frame limit.}
 \label{fig:sandbox}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.85\columnwidth]{figures/security-middle.png}
+\caption{Attacks 4 and 5: type confusion (a string multiplied by an integer, rejected by property P2) and the read of an uninitialised local (rejected by definite-assignment property P4).}
+\label{fig:secmiddle}
 \end{figure}
 
 \subsection{Diagnostics and Robustness}
@@ -1315,7 +1585,7 @@ D6 & SSA & no $\phi$-functions when a function begins with a loop (wrong SSA for
 \end{table*}
 
 \subsection{Educational Value and Other Front Ends}
-Because one \code{CompileResult} drives every view, the same artefacts appear in the desktop viewer and the self-contained HTML report (Figs.~\ref{fig:desktop} and~\ref{fig:report}), which can be e-mailed or printed and requires no server. Taken together, the studio covers every module of the syllabus (Table~\ref{tab:syllabus} and Fig.~\ref{fig:syllabus}) with an inspectable artefact of a real compilation rather than a static diagram: a student can change a program and immediately see how the token stream, the parse, the symbol table, the flow graph, the data-flow solution, the SSA form and the verifier's proof change with it; and, following the engagement findings of the visualisation literature~\cite{hundhausen2002,sorva2013}, the student can also \emph{operate} each instrument---choose the token, the state, the block, the analysis or the step---rather than only look at it.
+Because one \code{CompileResult} drives every view, the same artefacts appear in the desktop viewer and the self-contained HTML report (Figs.~\ref{fig:desktop} and~\ref{fig:report}), with four more desktop tabs in Fig.~\ref{fig:desktop2} and three more report sections in Fig.~\ref{fig:report2}, which can be e-mailed or printed and requires no server. Taken together, the studio covers every module of the syllabus (Table~\ref{tab:syllabus} and Fig.~\ref{fig:syllabus}) with an inspectable artefact of a real compilation rather than a static diagram: a student can change a program and immediately see how the token stream, the parse, the symbol table, the flow graph, the data-flow solution, the SSA form and the verifier's proof change with it; and, following the engagement findings of the visualisation literature~\cite{hundhausen2002,sorva2013}, the student can also \emph{operate} each instrument---choose the token, the state, the block, the analysis or the step---rather than only look at it.
 
 \begin{figure*}[!t]
 \centering
@@ -1329,12 +1599,34 @@ Because one \code{CompileResult} drives every view, the same artefacts appear in
 
 \begin{figure*}[!t]
 \centering
+\subfloat[Tokens tab: kind, lexeme, position and attribute]{\includegraphics[width=0.49\textwidth]{figures/desktop-tokens.png}\label{fig:desktop2-a}}
+\hfil
+\subfloat[LR parse tab: the 297 steps of the LALR(1) parse]{\includegraphics[width=0.49\textwidth]{figures/desktop-parse.png}\label{fig:desktop2-b}}\\[4pt]
+\subfloat[Data-flow tab: the four analyses of \code{03\_gcd.nova}]{\includegraphics[width=0.49\textwidth]{figures/desktop-dataflow.png}\label{fig:desktop2-c}}
+\hfil
+\subfloat[SSA tab: \code{06\_parallel.nova} with its $\phi$-functions]{\includegraphics[width=0.49\textwidth]{figures/desktop-ssa.png}\label{fig:desktop2-d}}
+\caption{Four more tabs of the desktop viewer. Every phase that the studio draws is available here as a table or a listing.}
+\label{fig:desktop2}
+\end{figure*}
+
+\begin{figure*}[!t]
+\centering
 \subfloat[Overview: the headline numbers and the source program]{\includegraphics[width=0.49\textwidth]{figures/report-html-overview.png}\label{fig:report-a}}
 \hfil
 \subfloat[Optimisation: the flow graph of \code{main} before optimisation]{\includegraphics[width=0.49\textwidth]{figures/report-html.png}\label{fig:report-b}}\\[4pt]
-\subfloat[SSA and parallelism: dominators and the SSA form of each function]{\includegraphics[width=0.49\textwidth]{figures/report-html-verifier.png}\label{fig:report-c}}
+\subfloat[SSA and parallelism: dominators and the SSA form of each function]{\includegraphics[width=0.49\textwidth]{figures/report-html-ssa.png}\label{fig:report-c}}
 \caption{The self-contained HTML report for \code{05\_optimiser.nova}, which embeds every phase and its flow graphs in one file with no external resources.}
 \label{fig:report}
+\end{figure*}
+
+\begin{figure*}[!t]
+\centering
+\subfloat[Lexical section: the DFA statistics and the token specifications]{\includegraphics[width=0.49\textwidth]{figures/report-html-lexical.png}\label{fig:report2-a}}
+\hfil
+\subfloat[Code-generation section: activation record and next-use information]{\includegraphics[width=0.49\textwidth]{figures/report-html-codegen.png}\label{fig:report2-b}}\\[4pt]
+\subfloat[Run section: step counts, output and the activation-record stack]{\includegraphics[width=0.49\textwidth]{figures/report-html-run.png}\label{fig:report2-c}}
+\caption{Three more sections of the HTML report for \code{05\_optimiser.nova}.}
+\label{fig:report2}
 \end{figure*}
 
 \subsection{Limitations and Threats to Validity}
@@ -1356,6 +1648,7 @@ Three threats bear on the evaluation itself:
 \end{itemize}
 
 % =============================================================================
+\clearpage
 \section{Conclusions and Future Work}
 \label{sec:conclusion}
 This paper presented Nova, a glass-box compiler that takes an original language from regular expressions to verified, sandboxed execution while retaining and displaying every artefact on the way, and Nova Studio, which turns those artefacts into instruments a learner can operate. The evaluation shows six results:
@@ -1380,8 +1673,103 @@ Future work follows directly from the limitations:
 \item a controlled classroom study measuring whether the glass-box studio, and in particular its players, improve learning outcomes in a compiler course.
 \end{enumerate}
 
+\appendices
+\section{The Nova Grammar}
+\label{app:grammar}
+The 58 productions of the Nova grammar, numbered as in the grammar module (Fig.~\ref{fig:grammarlisting}). The LR builder augments the grammar with \code{program$'$ $\to$ program} as production 0, so the reduce entries of the LR tables (Figs.~\ref{fig:automaton}, \ref{fig:lrtable} and~\ref{fig:lrstate26}) refer to these numbers plus one. Terminals are in capitals; \code{eps} is the empty string.
+
+\begin{figure*}[!t]
+\begin{minipage}[t]{0.495\textwidth}
+\lstinputlisting[style=term,firstline=1,lastline=29]{data/cli/grammar.txt}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.495\textwidth}
+\lstinputlisting[style=term,firstline=30,lastline=58]{data/cli/grammar.txt}
+\end{minipage}
+\caption{The Nova grammar: 58 productions over 39 terminals and 20 non-terminals, left-recursive for left-associative operators.}
+\label{fig:grammarlisting}
+\end{figure*}
+
+\section{The Bytecode Instruction Set}
+\label{app:bytecode}
+Table~\ref{tab:isa} lists the 24 opcodes of the stack bytecode with their stack effect, which is the table the verifier uses to check stack depth (property P1). \code{CALL} is the only instruction whose effect depends on its operand: it pops the callee's $n$ arguments and pushes one result.
+
+\begin{table}[!t]
+\caption{Stack Bytecode Instruction Set}
+\label{tab:isa}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}l c c L{4.2cm}@{}}
+\toprule
+Opcode & Pop & Push & Meaning \\
+\midrule
+\code{ICONST} $k$ & 0 & 1 & push integer constant $k$ \\
+\code{SCONST} $i$ & 0 & 1 & push string $i$ of the string pool \\
+\code{LOAD} $s$ & 0 & 1 & push local slot $s$ \\
+\code{STORE} $s$ & 1 & 0 & pop into local slot $s$ \\
+\code{ADD}, \code{SUB}, \code{MUL} & 2 & 1 & arithmetic; \code{ADD} also joins two strings \\
+\code{DIV}, \code{MOD} & 2 & 1 & truncating division and remainder; zero divisor is a run-time error \\
+\code{NEG} & 1 & 1 & negate \\
+\code{DUP} & 1 & 2 & duplicate the top of the stack \\
+\code{POP} & 1 & 0 & discard the top of the stack \\
+\code{IF\_LT}, \code{IF\_GT}, \code{IF\_LE} & 2 & 0 & compare and branch \\
+\code{IF\_GE}, \code{IF\_EQ}, \code{IF\_NE} & 2 & 0 & compare and branch \\
+\code{GOTO} $t$ & 0 & 0 & unconditional branch \\
+\code{SWITCH} $[v\to t]$ & 1 & 0 & jump table with a default target \\
+\code{PRINT} & 1 & 0 & print the value \\
+\code{CALL} $(f, n)$ & $n$ & 1 & push an activation record for $f$ \\
+\code{RETURN} & 1 & 0 & pop the frame, return the value \\
+\code{HALT} & 0 & 0 & stop the machine \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Self-Test Output}
+\label{app:tests}
+The complete output of \code{python -m nova test} on the final code (Fig.~\ref{fig:testoutput}). Each test name states the property it checks; the prefix is the syllabus module, \code{E2E} for whole-pipeline tests and \code{WEB} for the studio's server.
+
+\begin{figure*}[!t]
+\lstinputlisting[style=term]{data/cli/test.txt}
+\caption{\code{python -m nova test}: 34 tests, 34 passed.}
+\label{fig:testoutput}
+\end{figure*}
+
+\section{Reproducing This Report}
+\label{app:repro}
+Everything in this report can be regenerated from the repository with the standard Python installation, Node.js for the screenshot driver and a TeX distribution:
+\begin{enumerate}
+\item \code{python -m nova test} checks the compiler (Appendix~\ref{app:tests}).
+\item \code{python report/tools/measure.py} re-measures every number and writes \code{report/data/measurements.json}; it should be run with nothing else busy on the machine, and it records whether the machine is on mains or battery power.
+\item \code{python report/tools/tables.py} prints the LaTeX rows of the tables from those measurements.
+\item \code{python -m nova serve --no-browser} and a headless Chrome on port 9333, followed by \code{node report/tools/capture.mjs}, regenerate the 80 studio and HTML-report screenshots; \code{report/tools/desktop\_capture.ps1} photographs seven tabs of the desktop viewer.
+\item \code{latexmk -pdf main.tex} in \code{report/} builds this PDF, and \code{python report/tools/package.py} builds the archive for Overleaf.
+\end{enumerate}
+The command-line listings of Section~\ref{sec:cli} are the unedited output of the commands named in their captions, saved under \code{report/data/cli}.
+
+\section*{Project Team and Supervision}
+This work was carried out as the course project of the Compiler Design course at the Vellore Institute of Technology, Vellore, under the guidance of the faculty member listed in Table~\ref{tab:team}.
+
+\begin{table}[!h]
+\caption{Project Team and Faculty Guide}
+\label{tab:team}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}L{2.3cm} l L{3.8cm}@{}}
+\toprule
+Name & Role & Registration no. / designation \\
+\midrule
+Harvi Bhavin Patel & Student & 24BCE2557 \\
+Srishti Saluja & Student & 24BCE2587 \\
+Nainika Pathak & Student & 24BCE0230 \\
+\midrule
+Dr.\ Hariharan R L & Faculty guide & Assistant Professor Senior Grade 1, Centre for Artificial Intelligence Research, VIT, Vellore; \code{hariharan.rl@vit.ac.in}; cabin SJT Block 510-A47 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section*{Acknowledgment}
-The authors thank [Faculty Name], [Department], [Institution], for guidance throughout the Compiler Design course project.
+The authors thank Dr.\ Hariharan R L, Assistant Professor Senior Grade 1, Centre for Artificial Intelligence Research, Vellore Institute of Technology, Vellore, for guidance throughout the Compiler Design course project, and the Vellore Institute of Technology for the facilities that made the work possible.
 
 % =============================================================================
 \begin{thebibliography}{00}

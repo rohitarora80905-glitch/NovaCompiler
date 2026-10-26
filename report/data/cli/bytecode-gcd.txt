@@ -1,0 +1,76 @@
+
+Bytecode
+==============================
+.function gcd  params=2 slots=3 returns=value
+      0  LOAD 1                    ; b
+      1  ICONST 0                  
+      2  IF_GT 4                   
+      3  GOTO 13                   
+      4  LOAD 1                    ; b
+      5  STORE 2                   ; t
+      6  LOAD 0                    ; a
+      7  LOAD 1                    ; b
+      8  MOD                       
+      9  STORE 1                   ; b
+     10  LOAD 2                    ; t
+     11  STORE 0                   ; a
+     12  GOTO 0                    
+     13  LOAD 0                    ; a
+     14  RETURN                    
+
+.function lcm  params=2 slots=5 returns=value
+      0  LOAD 0                    ; a
+      1  LOAD 1                    ; b
+      2  CALL ('gcd', 2)           ; call gcd
+      3  STORE 2                   ; t0
+      4  LOAD 0                    ; a
+      5  LOAD 2                    ; t0
+      6  DIV                       
+      7  DUP                       ; peephole: store+reload
+      8  STORE 3                   ; t1
+      9  LOAD 1                    ; b
+     10  MUL                       
+     11  DUP                       ; peephole: store+reload
+     12  STORE 4                   ; t2
+     13  RETURN                    
+
+.function main  params=0 slots=2 returns=void
+      0  ICONST 1071               
+      1  ICONST 462                
+      2  CALL ('gcd', 2)           ; call gcd
+      3  DUP                       ; peephole: store+reload
+      4  STORE 0                   ; t0
+      5  PRINT                     
+      6  ICONST 21                 
+      7  ICONST 6                  
+      8  CALL ('lcm', 2)           ; call lcm
+      9  DUP                       ; peephole: store+reload
+     10  STORE 1                   ; t1
+     11  PRINT                     
+     12  ICONST 0                  ; void functions return 0
+     13  RETURN                    
+
+
+Verifier
+==============================
+  gcd: VERIFIED
+     [PASS] 1. operand-stack depth consistent at every merge  (max depth 2)
+     [PASS] 2. types on the stack match every instruction  (0 mismatch(es))
+     [PASS] 3. every jump target is in range and on an instruction boundary  (15 instruction(s) checked)
+     [PASS] 4. no local is read before it is written  (3 slot(s), 2 parameter(s) pre-initialised)
+     [PASS] 5. no LOAD/STORE escapes the activation record  (slots 0..2)
+     [PASS] 6. no unreachable instructions  (all reachable)
+  lcm: VERIFIED
+     [PASS] 1. operand-stack depth consistent at every merge  (max depth 2)
+     [PASS] 2. types on the stack match every instruction  (0 mismatch(es))
+     [PASS] 3. every jump target is in range and on an instruction boundary  (14 instruction(s) checked)
+     [PASS] 4. no local is read before it is written  (5 slot(s), 2 parameter(s) pre-initialised)
+     [PASS] 5. no LOAD/STORE escapes the activation record  (slots 0..4)
+     [PASS] 6. no unreachable instructions  (all reachable)
+  main: VERIFIED
+     [PASS] 1. operand-stack depth consistent at every merge  (max depth 2)
+     [PASS] 2. types on the stack match every instruction  (0 mismatch(es))
+     [PASS] 3. every jump target is in range and on an instruction boundary  (14 instruction(s) checked)
+     [PASS] 4. no local is read before it is written  (2 slot(s), 0 parameter(s) pre-initialised)
+     [PASS] 5. no LOAD/STORE escapes the activation record  (slots 0..1)
+     [PASS] 6. no unreachable instructions  (all reachable)

@@ -92,6 +92,11 @@ const CLIP = `window.__clip = (els, pad) => {
   const b = Math.min(innerHeight, Math.max(...rs.map((r) => r.bottom)) + pad);
   if (r - x < 8 || b - y < 8) throw new Error('clip is empty: ' + JSON.stringify({ x, y, r, b }));
   return { x, y, width: r - x, height: b - y };
+};
+// the n-th row of a table or code block, or its last row if it is shorter
+window.__row = (el, n) => {
+  const rows = el.querySelectorAll('tbody tr, pre .row');
+  return rows[Math.min(n, rows.length) - 1];
 }`;
 
 async function shot(name, elementsExpr = null, pad = 12) {
@@ -280,6 +285,98 @@ await shot('view-budget', `[${q('#view .notice')}, ${qa('#view > .card', 0)}]`);
 await studio('tab=metrics&example=02_fibonacci.nova', NARROW);
 await shot('view-metrics', `[${q('#view .v-head')}, ${q('#view .tbl-wrap tbody tr:nth-child(14)')}]`);
 
+// ------------------------------------------------------- more studio views
+await studio('tab=overview&example=02_fibonacci.nova');
+await shot('pipeline-rail', `[${q('#rail')}]`, 0);
+await shot('phase-times', `[${q('#view .grid.two > .card:nth-child(1)')}]`);
+
+await studio('tab=overview&example=08_broken.nova');
+await js(`${q('[data-dock="problems"]')}.click()`);
+await js(`${qa('.problem', 3)}.click()`);
+await sleep(250);
+await shot('editor-problems', `[${q('#editor-pane')}]`, 0);
+
+await studio('tab=overview&example=03_gcd.nova');
+await shot('overview-gcd', `[${q('#view .hero')}, ${qa('#view .kpi', 7)}]`);
+await shot('backends-gcd', `[${q('#view .grid.two > .card:nth-child(2)')}]`);
+
+await studio('tab=overview&example=01_hello.nova');
+await js(`(() => { const t = document.querySelector('#source'); t.focus(); t.select();
+  document.execCommand('insertText', false, 'let total = 0;\\nwhile total < 3 do\\n    total = total + "one";\\nend\\nprint totl;\\n'); })()`);
+await until(`document.querySelector('#problem-count').textContent !== '0'`);
+await sleep(400);
+await js(`${q('[data-dock="problems"]')}.click()`);
+await shot('live-error');
+
+await studio('tab=lexical&example=02_fibonacci.nova', NARROW);
+await withGrammar();
+await shot('token-table', `[${q('#view > .tbl-wrap .tbl-tools')}, __row(${q('#view > .tbl-wrap')}, 18)]`);
+await js(`${q('[data-fold="lex-specs"] summary')}.click()`);
+await sleep(200);
+await shot('token-specs', `[${q('[data-fold="lex-specs"] summary')}, __row(${q('[data-fold="lex-specs"]')}, 24)]`);
+await js(`${q('[data-fold="lex-followpos"] summary')}.click()`);
+await sleep(200);
+await scrollTo('[data-fold="lex-followpos"]');
+await shot('followpos', `[${q('[data-fold="lex-followpos"] summary')}, __row(${q('[data-fold="lex-followpos"]')}, 26)]`);
+
+await studio('tab=syntax&example=02_fibonacci.nova', NARROW);
+await withGrammar();
+await js(`${q('[data-fold="syn-ff"] summary')}.click()`);
+await sleep(200);
+await shot('first-follow', `[${q('[data-fold="syn-ff"] summary')}, __row(${q('[data-fold="syn-ff"]')}, 14)]`);
+await js(`${q('[data-fold="syn-ll1"] summary')}.click()`);
+await sleep(200);
+await shot('left-recursion', `[${qa('[data-fold="syn-ll1"] .code', 1)}.querySelector('.code-head'), __row(${qa('[data-fold="syn-ll1"] .code', 1)}, 34)]`);
+await js(`${q('[data-fold="syn-rd"] summary')}.click()`);
+await sleep(200);
+await shot('rd-trace', `[${q('[data-fold="syn-rd"] summary')}, __row(${q('[data-fold="syn-rd"]')}, 30)]`);
+await js(`${q('#lr-state-input')}.value = 26; ${q('#lr-state-input')}.dispatchEvent(new Event('input', {bubbles:true}))`);
+await sleep(250);
+await shot('lr-state-26', `[${q('#lr-card')}]`);
+await js(`(() => { const r = document.querySelector('[data-player="lr"] .player-range'); r.value = r.max; r.dispatchEvent(new Event('input', {bubbles:true})); })()`);
+await sleep(250);
+await shot('parse-player-accept', `[${q('#lr-player')}]`);
+
+await studio('tab=semantic&example=02_fibonacci.nova', MID);
+await js(`${qa('[data-ast]', 5)}.click()`);
+await sleep(200);
+await shot('ast-case', `[${q('#view .graph-box svg')}]`, 0);
+
+await studio('tab=ir&fn=main&example=04_primes.nova', NARROW);
+await shot('tac-primes', `[${q('#view .v-head')}, ${qa('#view .code', 0)}]`);
+
+await studio('tab=optimiser&fn=isprime&example=04_primes.nova', WIDE);
+await shot('cfg-primes', `[${q('#view .cfg-box svg')}]`, 0);
+
+await studio('tab=dataflow&fn=main&example=05_optimiser.nova', MID);
+await js(`document.querySelector('[data-df="Reaching definitions"]').click()`);
+await sleep(200);
+await shot('df-reaching', `[${q('#view .cfg-box svg')}]`, 0);
+await js(`document.querySelector('[data-df="Available expressions"]').click()`);
+await sleep(200);
+await shot('df-available', `[${q('#view .cfg-box svg')}]`, 0);
+
+await studio('tab=codegen&fn=main&example=05_optimiser.nova', WIDE);
+await shot('nextuse', `[${q('#view > .tbl-wrap .tbl-tools')}, __row(${q('#view > .tbl-wrap')}, 14)]`);
+
+await studio('tab=ssa&fn=isprime&example=04_primes.nova', MID);
+await shot('ssa-primes', `[${q('#view .grid.two')}]`);
+await studio('tab=ssa&fn=main&example=06_parallel.nova', MID);
+await shot('dom-parallel', `[${q('#view .graph-box svg')}]`, 0);
+
+await studio('tab=run&example=10_strings.nova', { width: 1600, height: 2600, left: 48 });
+await js(`(() => { const r = document.querySelector('[data-player="vm"] .player-range'); r.value = r.max; r.dispatchEvent(new Event('input', {bubbles:true})); })()`);
+await sleep(250);
+await shot('vm-stepper-strings', `[${q('#vm-stepper')}]`);
+
+await studio('tab=security&example=02_fibonacci.nova', NARROW);
+await until(`!!document.querySelector('#view .attack')`);
+await js(STILL);
+await shot('security-middle', `[${qa('#view .attack', 3)}, ${qa('#view .attack', 4)}]`);
+
+await studio('tab=metrics&example=02_fibonacci.nova', NARROW);
+await shot('metrics-timings', `[${qa('#view .sec', 0)}, ${qa('#view .tbl-wrap', 1)}, ${q('#view > .card:last-child')}]`);
+
 // ----------------------------------------------------- the HTML report
 await viewport(1400, 900);
 const report = pathToFileURL(join(ROOT, 'docs', 'Nova-GlassBox-Report-optimiser.html')).href;
@@ -293,9 +390,15 @@ await js(`(() => {
 })()`);
 await shot('report-html');
 await js('show(8); window.scrollTo(0, 0)');
-await shot('report-html-verifier');
+await shot('report-html-ssa');
 await js('show(0); window.scrollTo(0, 0)');
 await shot('report-html-overview');
+await js('show(1); window.scrollTo(0, 0)');
+await shot('report-html-lexical');
+await js('show(7); window.scrollTo(0, 0)');
+await shot('report-html-codegen');
+await js('show(10); window.scrollTo(0, 0)');
+await shot('report-html-run');
 
 console.log(errors.length ? 'page errors:\n  ' + errors.join('\n  ') : 'no page errors');
 ws.close();

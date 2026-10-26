@@ -27,7 +27,8 @@ sys.path.insert(0, root_dir); os.chdir(root_dir)
 from nova.gui import GlassBox, apply_theme
 root = tk.Tk(); apply_theme(root)
 app = GlassBox(root, os.path.join(root_dir, "examples", example))
-widget = {"opt": app.t_opt, "run": app.t_run, "ver": app.t_ver, "sym": app.t_sym, "src": app.src}[tab]
+widget = {"opt": app.t_opt, "run": app.t_run, "ver": app.t_ver, "sym": app.t_sym, "src": app.src,
+          "tok": app.t_tokens, "parse": app.t_parse, "df": app.t_df, "ssa": app.t_ssa}[tab]
 app.nb.select(widget.master)
 root.mainloop()
 '@
@@ -37,7 +38,11 @@ Set-Content -Path $tmp -Value $script -Encoding utf8
 $shots = @(
   @{ tab = 'opt'; example = '05_optimiser.nova'; name = 'desktop-viewer' },
   @{ tab = 'run'; example = '02_fibonacci.nova'; name = 'desktop-run' },
-  @{ tab = 'ver'; example = '03_gcd.nova'; name = 'desktop-verifier' }
+  @{ tab = 'ver'; example = '03_gcd.nova'; name = 'desktop-verifier' },
+  @{ tab = 'tok'; example = '02_fibonacci.nova'; name = 'desktop-tokens' },
+  @{ tab = 'parse'; example = '02_fibonacci.nova'; name = 'desktop-parse' },
+  @{ tab = 'df'; example = '03_gcd.nova'; name = 'desktop-dataflow' },
+  @{ tab = 'ssa'; example = '06_parallel.nova'; name = 'desktop-ssa' }
 )
 foreach ($s in $shots) {
   $p = Start-Process -FilePath python -ArgumentList ('"' + $tmp + '" "' + $root + '" ' + $s.example + ' ' + $s.tab) -PassThru

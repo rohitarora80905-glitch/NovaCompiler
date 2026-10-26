@@ -1,8 +1,10 @@
 # Nova — IEEE conference-format project report
 
-`Nova-IEEE-Report.pdf` is the compiled report: 29 pages, 50 figures (46 of
-them screenshots of Nova Studio, the desktop viewer and the HTML report),
-17 tables and 67 references. It uses the official IEEE Conference Template
+`Nova-IEEE-Report.pdf` is the compiled report: 44 pages, 85 figures built
+from 87 screenshots of Nova Studio, the desktop viewer and the HTML report
+plus unedited command-line listings, 20 tables, 67 references and four
+appendices (grammar, bytecode instruction set, self-test output, how to
+reproduce the report). It uses the official IEEE Conference Template
 (`IEEEtran`, conference mode), as on Overleaf, and has the sections the final
 review asks for:
 
@@ -13,14 +15,24 @@ review asks for:
 5. Results and Discussion
 6. Conclusions and Future Work
 
-It ends with an Acknowledgment and the References.
+It ends with the appendices, the project team, an Acknowledgment and the
+References.
 
-## Before you submit: fill in the authors
+## Project team
 
-The author block and the acknowledgment hold bracketed placeholders. Edit
-them near the top of `main.tex` (search for `>>> AUTHORS`) and in the
-`Acknowledgment` section near the end. Add or remove `\and` blocks to match
-the number of authors.
+| Name | Role | Registration no. |
+|---|---|---|
+| Harvi Bhavin Patel | Student | 24BCE2557 |
+| Srishti Saluja | Student | 24BCE2587 |
+| Nainika Pathak | Student | 24BCE0230 |
+
+Faculty guide: Dr. Hariharan R L, Assistant Professor Senior Grade 1, Centre
+for Artificial Intelligence Research, Vellore Institute of Technology
+(hariharan.rl@vit.ac.in, cabin SJT Block 510-A47).
+
+The author block at the top of `main.tex` lists the three students and the
+faculty guide; the same details appear in the "Project Team and Supervision"
+table and the Acknowledgment at the end.
 
 ## Editing on Overleaf
 
@@ -45,9 +57,10 @@ Nothing in the paper is typed in by hand.
 |---|---|
 | `tools/measure.py` | `data/measurements.json` — every statistic and timing in the paper, including the scaling series; it also records whether the laptop was on mains or battery |
 | `tools/tables.py` | the LaTeX table rows, printed from `measurements.json` |
-| `tools/capture.mjs` | `figures/*.png` — the 52 Nova Studio and HTML-report screenshots, at 2× pixel density |
-| `tools/desktop_capture.ps1` | `figures/desktop-*.png` — three tabs of the Tkinter desktop viewer, photographed from its own window |
+| `tools/capture.mjs` | `figures/*.png` — the 80 Nova Studio and HTML-report screenshots, at 2× pixel density |
+| `tools/desktop_capture.ps1` | `figures/desktop-*.png` — seven tabs of the Tkinter desktop viewer, photographed from its own window |
 | `tools/package.py` | `Nova-IEEE-Report-Overleaf.zip` |
+| `python -m nova …` | `data/cli/*.txt` — the command-line listings of Section III-N and the appendices, saved unedited |
 
 `capture.mjs` needs Nova Studio and a headless Chrome to be running first:
 

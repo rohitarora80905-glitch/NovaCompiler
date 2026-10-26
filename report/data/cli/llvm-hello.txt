@@ -1,0 +1,19 @@
+; LLVM IR emitted by the Nova compiler
+; textual IR only - no LLVM toolchain is needed to produce this file
+target triple = "x86_64-pc-windows-msvc"
+
+declare void @nova_print_int(i32)
+declare void @nova_print_str(i8*)
+
+@.str0 = private unnamed_addr constant [29 x i8] c"hello from the Nova compiler\00"
+
+define i32 @main() {
+entry:
+  br label %B0
+B0:
+  %r1 = getelementptr [29 x i8], [29 x i8]* @.str0, i32 0, i32 0
+  call void @nova_print_str(i8* %r1)
+  call void @nova_print_int(i32 42)
+  ret i32 0
+}
+

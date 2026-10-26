@@ -1,0 +1,58 @@
+  0. program -> decls
+  1. decls -> decls decl
+  2. decls -> eps
+  3. decl -> func
+  4. decl -> stmt
+  5. func -> FUNC IDENT LPAREN params RPAREN stmts END
+  6. params -> plist
+  7. params -> eps
+  8. plist -> plist COMMA IDENT
+  9. plist -> IDENT
+ 10. stmts -> stmts stmt
+ 11. stmts -> eps
+ 12. stmt -> LET IDENT ASSIGN expr SEMI
+ 13. stmt -> IDENT ASSIGN expr SEMI
+ 14. stmt -> IDENT LPAREN args RPAREN SEMI
+ 15. stmt -> PRINT expr SEMI
+ 16. stmt -> RETURN expr SEMI
+ 17. stmt -> IF expr THEN stmts END
+ 18. stmt -> IF expr THEN stmts ELSE stmts END
+ 19. stmt -> WHILE expr DO stmts END
+ 20. stmt -> CASE expr OF whens END
+ 21. stmt -> CASE expr OF whens OTHERWISE stmts END
+ 22. whens -> whens when
+ 23. whens -> when
+ 24. when -> WHEN NUMBER COLON stmts
+ 25. expr -> expr OR join
+ 26. expr -> join
+ 27. join -> join AND eq
+ 28. join -> eq
+ 29. eq -> eq EQ rel
+ 30. eq -> eq NE rel
+ 31. eq -> rel
+ 32. rel -> rel LT add
+ 33. rel -> rel GT add
+ 34. rel -> rel LE add
+ 35. rel -> rel GE add
+ 36. rel -> add
+ 37. add -> add PLUS term
+ 38. add -> add MINUS term
+ 39. add -> term
+ 40. term -> term STAR unary
+ 41. term -> term SLASH unary
+ 42. term -> term PERCENT unary
+ 43. term -> unary
+ 44. unary -> MINUS unary
+ 45. unary -> NOT unary
+ 46. unary -> factor
+ 47. factor -> NUMBER
+ 48. factor -> STRING
+ 49. factor -> TRUE
+ 50. factor -> FALSE
+ 51. factor -> IDENT
+ 52. factor -> IDENT LPAREN args RPAREN
+ 53. factor -> LPAREN expr RPAREN
+ 54. args -> alist
+ 55. args -> eps
+ 56. alist -> alist COMMA expr
+ 57. alist -> expr

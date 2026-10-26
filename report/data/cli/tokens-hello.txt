@@ -1,0 +1,29 @@
+
+DFA
+==============================
+  positions                  147
+  dfa_states_before_min      92
+  dfa_states_after_min       92
+  symbol_classes             37
+  token_patterns             41
+
+Tokens
+==============================
+    4:1   PRINT        'print'              -
+    4:7   STRING       '"hello from the Nova compiler"' text="hello from the Nova compiler"
+    4:37  SEMI         ';'                  -
+    6:1   LET          'let'                -
+    6:5   IDENT        'a'                  symbol-table entry
+    6:7   ASSIGN       '='                  -
+    6:9   NUMBER       '6'                  value=6
+    6:10  SEMI         ';'                  -
+    7:1   LET          'let'                -
+    7:5   IDENT        'b'                  symbol-table entry
+    7:7   ASSIGN       '='                  -
+    7:9   NUMBER       '7'                  value=7
+    7:10  SEMI         ';'                  -
+    8:1   PRINT        'print'              -
+    8:7   IDENT        'a'                  symbol-table entry
+    8:9   STAR         '*'                  -
+    8:11  IDENT        'b'                  symbol-table entry
+    8:12  SEMI         ';'                  -
