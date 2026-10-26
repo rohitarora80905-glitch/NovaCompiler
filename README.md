@@ -27,25 +27,67 @@ source ─► scanner ─► parser ─► semantic ─► three-address ─► 
 
 ## Quick start
 
-**Windows** — double-click `run.bat`. That is the whole installation.
+**Windows** — double-click `serve.bat` for Nova Studio in your browser, or
+`run.bat` for the desktop viewer. That is the whole installation.
 
 **Any platform**
 
 ```
+python -m nova serve                              Nova Studio, the web UI, at http://127.0.0.1:8765
 python -m nova gui examples/02_fibonacci.nova     the desktop Glass-Box viewer
 python -m nova run examples/03_gcd.nova           compile, verify and run
 python -m nova report examples/02_fibonacci.nova  a full HTML report you can open
 python -m nova phases examples/05_optimiser.nova  every phase, printed
 python -m nova attack                             hostile bytecode vs the verifier
-python -m nova test                               the 26-test self-check
+python -m nova test                               the 32-test self-check
 ```
 
 There is **nothing to install**. No PLY, no ANTLR, no LLVM, no C or C++
 compiler, no `pip install`. `requirements.txt` is empty on purpose.
 
 If your Python was built without `tkinter` (some Linux builds are), the GUI will
-say so and everything else still works — `python -m nova report file.nova`
-writes exactly the same information to a single HTML file.
+say so and everything else still works — `python -m nova serve` and
+`python -m nova report file.nova` show exactly the same information in a browser.
+
+---
+
+## Nova Studio — the web UI
+
+`python -m nova serve` starts a small local server (standard library only) and
+opens the studio in your browser: an editor on the left, the whole compiler on
+the right, in a black-and-orange interface.
+
+- **Live compilation.** Every keystroke recompiles in a few milliseconds; the
+  pipeline rail shows each phase passing, failing or being skipped, with its
+  timing. `Ctrl+Enter` runs with the full instruction budget.
+- **Every phase, drawn.** Token stream and minimised DFA; SLR vs CLR vs LALR and
+  the bottom-up parse; symbol table and attribute flow; three-address code;
+  the optimiser pass by pass with before/after **control-flow graphs**; the four
+  data-flow analyses converging; activation records, next-use and register
+  allocation; SSA, dominance frontiers and loop-parallelism verdicts; the
+  verifier's proofs; the VM trace and the activation-record stack.
+- **Three back-ends side by side.** Optimised bytecode, unoptimised bytecode
+  and the register machine must print the same thing — the overview shows it.
+- **Security lab.** The eight hostile bytecode programs, and what stopped each.
+- **Problems that point at the code.** Diagnostics are marked in the gutter;
+  click one to jump to the line.
+- **Optimiser switch**, example programs, open or drag-and-drop a `.nova` file,
+  download the full HTML report, deep links (`#tab=optimiser&fn=main`), and a
+  layout that works down to phone width.
+
+While you type, each program gets a 250,000-instruction budget so a loop you
+have not finished writing cannot freeze the page; **Run** uses the normal
+2,000,000. The server binds to `127.0.0.1`, accepts only JSON POSTs, and
+rejects foreign `Host` headers, so other web pages cannot drive it.
+
+| Endpoint | |
+|---|---|
+| `GET /api/health` | version and budgets |
+| `GET /api/examples` | the example programs |
+| `GET /api/grammar` | grammar, FIRST/FOLLOW, LL(1) conflicts, the ambiguity demo |
+| `POST /api/compile` | `{source, optimise, mode: "live"\|"run"}` → every phase as JSON |
+| `POST /api/report` | the HTML report as a download |
+| `GET /api/attacks` | hostile bytecode vs the verifier and sandbox |
 
 ---
 
@@ -105,6 +147,9 @@ shadow.
 | `vm.py` | 6, 8 | Sandboxed stack machine with real activation records and hard resource limits |
 | `attacks.py` | 8 | Eight hand-written hostile bytecode programs, for the verifier to catch |
 | `report_html.py` | — | The whole compilation as one self-contained HTML file |
+| `report_json.py` | — | The same compilation as JSON, for Nova Studio |
+| `server.py` | — | Nova Studio's local HTTP server (standard library only) |
+| `web/` | — | Nova Studio's page: `index.html`, `studio.css`, `studio.js` — no frameworks, no build step |
 | `gui.py` | — | The Tkinter Glass-Box viewer, one tab per phase |
 
 ---
@@ -120,9 +165,9 @@ Numbers produced by the compiler itself, not claims:
 | **SLR** states / entries / conflicts | 116 / 1229 / **0** |
 | **CLR** states / entries / conflicts | 478 / 4790 / **0** |
 | **LALR** states / entries / conflicts | 116 / 1214 / **0** |
-| Optimiser on `05_optimiser.nova` | **18 → 13** instructions |
+| Optimiser on `05_optimiser.nova` | **21 → 19** IR, **55 → 47** bytecode, **188 → 148** VM steps |
 | Hostile bytecode programs stopped | **8 of 8** |
-| Self-tests passing | **26 of 26** |
+| Self-tests passing | **32 of 32** |
 
 The LALR line is the point of the exercise: same state count as SLR, the power
 of CLR, a quarter of CLR's size. That is why every real parser generator emits
@@ -157,13 +202,15 @@ already been killed inside a loop) was caught and fixed in `gcd`.
 
 ```
 NovaCompiler/
-├── run.bat            double-click launcher (Windows)
+├── serve.bat          double-click Nova Studio (Windows)
+├── run.bat            double-click desktop viewer (Windows)
 ├── test.bat           double-click self-test
 ├── requirements.txt   intentionally empty
-├── nova/              the compiler (23 modules)
+├── nova/              the compiler (25 modules)
+│   └── web/           Nova Studio's page
 ├── examples/          8 sample programs
-├── tests/test_all.py  26 self-tests
+├── tests/test_all.py  32 self-tests
 └── docs/              generated reports
 ```
 
-Requires Python 3.8+. Tested on 3.12.
+Requires Python 3.8+. Tested on 3.12 and 3.14.
