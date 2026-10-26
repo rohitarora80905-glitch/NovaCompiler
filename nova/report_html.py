@@ -19,42 +19,47 @@ from .pipeline import CompileResult
 
 CSS = """
 :root{
-  --ink:#12161c; --muted:#5d6b7a; --line:#dfe5ec; --bg:#f6f8fb; --panel:#ffffff;
-  --accent:#0b6f5f; --accent2:#b8420f; --warn:#a11c1c; --ok:#12633f;
-  --code:#0f2233;
+  --ink:#f4f4f3; --muted:#9a9aa4; --line:#26262c; --bg:#09090b; --panel:#121215;
+  --accent:#ff7a1a; --accent2:#ff9a45; --warn:#ff5d5d; --ok:#3ddc97;
+  --code:#0b0b0d; --head:#18181c;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);
      font-family:Segoe UI,Calibri,Arial,sans-serif;font-size:15px;line-height:1.55}
-header{background:var(--code);color:#eaf2f7;padding:26px 34px}
-header h1{margin:0 0 6px;font-size:27px;letter-spacing:.2px}
-header .sub{color:#9fc2c8;font-size:14px}
+header{background:radial-gradient(900px 260px at 0 0,rgba(255,122,26,.20),transparent 70%),
+       #0d0d10;color:var(--ink);padding:28px 34px;border-bottom:1px solid var(--line)}
+header h1{margin:0 0 6px;font-size:27px;letter-spacing:-.2px}
+header h1 b{color:var(--accent)}
+header .sub{color:var(--muted);font-size:14px}
 header .pills{margin-top:14px}
-.pill{display:inline-block;background:#1c3b52;color:#d7ecef;border-radius:20px;
-      padding:4px 13px;margin:3px 6px 3px 0;font-size:12.5px}
-.pill.bad{background:#5d1616;color:#ffdede}
-nav{display:flex;flex-wrap:wrap;gap:4px;background:#12293a;padding:0 22px 14px}
-nav button{background:#1d3d54;color:#cfe4ea;border:0;padding:9px 14px;
-     border-radius:7px 7px 0 0;cursor:pointer;font-size:13.5px;font-family:inherit}
-nav button:hover{background:#2a5470}
-nav button.on{background:var(--panel);color:var(--code);font-weight:600}
+.pill{display:inline-block;background:rgba(255,122,26,.10);color:#ffc38a;
+      border:1px solid rgba(255,122,26,.35);border-radius:20px;
+      padding:3px 12px;margin:3px 6px 3px 0;font-size:12.5px}
+.pill.bad{background:rgba(255,93,93,.12);color:#ff9d9d;border-color:rgba(255,93,93,.4)}
+nav{display:flex;flex-wrap:wrap;gap:4px;background:#0d0d10;padding:0 22px;
+    border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2}
+nav button{background:transparent;color:var(--muted);border:0;padding:12px 14px 11px;
+     cursor:pointer;font-size:13.5px;font-family:inherit;border-bottom:2px solid transparent}
+nav button:hover{color:var(--ink)}
+nav button.on{color:var(--ink);font-weight:600;border-bottom-color:var(--accent)}
 main{padding:26px 34px 70px;max-width:1500px}
 section{display:none}
 section.on{display:block}
-h2{font-size:21px;margin:4px 0 4px}
-h3{font-size:16.5px;margin:26px 0 8px;color:var(--accent)}
+h2{font-size:22px;margin:4px 0 4px;letter-spacing:-.2px}
+h3{font-size:16.5px;margin:28px 0 8px;color:var(--accent2)}
 p.note{color:var(--muted);margin:2px 0 16px;max-width:960px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;
-      padding:16px 18px;margin:0 0 18px;overflow:auto}
+.card{background:linear-gradient(180deg,#141417,#101013);border:1px solid var(--line);
+      border-radius:12px;padding:16px 18px;margin:0 0 18px;overflow:auto}
 table{border-collapse:collapse;width:100%;font-size:13.5px}
-th{background:#eef3f8;text-align:left;padding:7px 10px;border-bottom:2px solid var(--line);
-   font-weight:600;white-space:nowrap}
-td{padding:6px 10px;border-bottom:1px solid #eef1f5;vertical-align:top}
-tr:hover td{background:#fafcff}
-pre{background:#0f2233;color:#dfe9ef;padding:14px 16px;border-radius:8px;
-    overflow:auto;font-family:Consolas,Courier New,monospace;font-size:13px;
-    line-height:1.5;margin:0}
-code{font-family:Consolas,Courier New,monospace;background:#eef3f8;
+th{background:var(--head);color:var(--muted);text-align:left;padding:8px 10px;
+   border-bottom:1px solid #33333b;font-weight:600;white-space:nowrap;font-size:12px;
+   text-transform:uppercase;letter-spacing:.05em}
+td{padding:6px 10px;border-bottom:1px solid #1c1c21;vertical-align:top}
+tr:hover td{background:rgba(255,122,26,.05)}
+pre{background:var(--code);color:#e4e4e6;padding:14px 16px;border-radius:9px;
+    border:1px solid var(--line);overflow:auto;font-family:Consolas,Courier New,monospace;
+    font-size:13px;line-height:1.5;margin:0}
+code{font-family:Consolas,Courier New,monospace;background:#1c1c21;color:#ffc38a;
      padding:1px 5px;border-radius:4px;font-size:13px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .stat{display:inline-block;min-width:150px;margin:0 22px 14px 0}
@@ -66,6 +71,15 @@ code{font-family:Consolas,Courier New,monospace;background:#eef3f8;
 .small{font-size:12.5px;color:var(--muted)}
 ul.tight{margin:6px 0 0 18px;padding:0}
 ul.tight li{margin:3px 0}
+@media print{
+  :root{--ink:#111;--muted:#555;--line:#ddd;--bg:#fff;--panel:#fff;--code:#f6f6f6;--head:#f2f2f2}
+  header,nav{background:#fff;color:#111}
+  nav{display:none}
+  section{display:block !important;page-break-before:always}
+  .card,pre{background:#fff;color:#111}
+  code{background:#f2f2f2;color:#8a3a00}
+  td{border-bottom-color:#eee}
+}
 """
 
 JS = """
@@ -143,10 +157,12 @@ def cfg_svg(cfg: CFG, title: str = "") -> str:
     height = y
 
     parts = [f'<svg viewBox="0 0 {width} {height}" width="100%" '
-             f'style="max-width:{width}px;background:#fff;border:1px solid #dfe5ec;'
+             f'style="max-width:{width}px;background:#0b0b0d;border:1px solid #26262c;'
              f'border-radius:10px" xmlns="http://www.w3.org/2000/svg">']
     parts.append('<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="8" '
-                 'refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#5d6b7a"/>'
+                 'refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#6a6a76"/>'
+                 '</marker><marker id="ar-o" markerWidth="9" markerHeight="9" refX="8" '
+                 'refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#ff7a1a"/>'
                  '</marker></defs>')
     for i, b in enumerate(cfg.blocks):
         x, yy = pos[i]
@@ -161,25 +177,26 @@ def cfg_svg(cfg: CFG, title: str = "") -> str:
                 parts.append(
                     f'<path d="M{x + BW} {yy + hgt / 2} C{x + BW + 46} '
                     f'{yy + hgt / 2}, {sx + BW + 46} {sy + 12}, {sx + BW} {sy + 12}" '
-                    f'fill="none" stroke="#b8420f" stroke-width="1.6" '
-                    f'marker-end="url(#ar)" stroke-dasharray="5,3"/>')
+                    f'fill="none" stroke="#ff7a1a" stroke-width="1.6" '
+                    f'marker-end="url(#ar-o)" stroke-dasharray="5,3"/>')
             else:
                 parts.append(
                     f'<path d="M{x1} {y1} C{x1} {y1 + 26}, {x2} {y2 - 26}, {x2} {y2}" '
-                    f'fill="none" stroke="#5d6b7a" stroke-width="1.4" '
+                    f'fill="none" stroke="#5a5a66" stroke-width="1.4" '
                     f'marker-end="url(#ar)"/>')
     for i, b in enumerate(cfg.blocks):
         x, yy = pos[i]
         hgt = heights[i]
-        fill = "#eaf4f1" if i == cfg.entry else "#ffffff"
+        entry = i == cfg.entry
         parts.append(f'<rect x="{x}" y="{yy}" width="{BW}" height="{hgt}" rx="7" '
-                     f'fill="{fill}" stroke="#0b6f5f" stroke-width="1.3"/>')
+                     f'fill="{"#1f140b" if entry else "#141417"}" '
+                     f'stroke="{"#ff7a1a" if entry else "#34343c"}" stroke-width="1.3"/>')
         parts.append(f'<text x="{x + 9}" y="{yy + 16}" font-family="Consolas,monospace" '
-                     f'font-size="12" font-weight="bold" fill="#0b6f5f">B{i}</text>')
+                     f'font-size="12" font-weight="bold" fill="#ff9a45">B{i}</text>')
         for k, q in enumerate(b.quads[:14]):
             parts.append(
                 f'<text x="{x + 9}" y="{yy + 30 + k * LH}" '
-                f'font-family="Consolas,monospace" font-size="11.5" fill="#12161c">'
+                f'font-family="Consolas,monospace" font-size="11.5" fill="#e4e4e6">'
                 f'{esc(fmt_block(q)[:34])}</text>')
     parts.append("</svg>")
     return ("<div class='card'>" + (f"<p class='small'>{esc(title)}</p>" if title else "")
@@ -624,7 +641,7 @@ def build_report(res: CompileResult) -> str:
 <title>Nova - Glass-Box Compiler report - {esc(res.path)}</title>
 <style>{CSS}</style></head><body>
 <header>
-  <h1>Nova &mdash; a glass-box compiler</h1>
+  <h1><b>&#10022;</b> Nova &mdash; a glass-box compiler</h1>
   <div class="sub">Every phase of the compilation of
      <b>{esc(res.path)}</b>, opened up and laid out</div>
   <div class="pills">{status}{pills}</div>

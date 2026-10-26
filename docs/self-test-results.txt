@@ -1,4 +1,4 @@
-Nova self-test - 26 tests
+Nova self-test - 32 tests
 ======================================================================================
 M1  regex to DFA by the direct method: (a|b)*abb has 4 states               ok
 M1  DFA minimisation merges equivalent states                               ok
@@ -26,5 +26,11 @@ M8  the verifier does not reject a program merely for being unusual         ok
 E2E every example compiles, verifies, runs and prints what it should        ok
 E2E the broken example produces diagnostics from several phases at once     ok
 E2E the HTML report is generated for a real program                         ok
+E2E the optimiser switch changes the code but never the answer              ok
+E2E deeply nested input is reported as a diagnostic, not a crash            ok
+E2E the sandbox's instruction budget can be set per compilation             ok
+M2  the parse-table cache adds CLR after a shallow build                    ok
+WEB every example serialises to JSON for Nova Studio                        ok
+WEB the studio server answers over HTTP and refuses unsafe requests         ok
 ======================================================================================
-26 passed, 0 failed
+32 passed, 0 failed

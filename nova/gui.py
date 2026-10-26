@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import os
 import sys
-import threading
 import traceback
 from typing import List, Optional
 
@@ -30,7 +29,16 @@ from .pipeline import CompileResult, compile_source
 from .report_html import build_report
 
 MONO = ("Consolas", 10)
-SAMPLE = '''# Nova - a tiny language, compiled all the way down and run.
+UI = ("Segoe UI", 10)
+
+# Black and orange, the same palette as Nova Studio (nova/web/studio.css).
+BG, SURFACE, SURFACE2, LINE = "#0b0b0d", "#141417", "#1c1c21", "#2a2a31"
+TEXT, MUTED = "#f4f4f3", "#9a9aa4"
+ORANGE, ORANGE_HI, ORANGE_DEEP = "#ff7a1a", "#ff9a45", "#e2470b"
+CODE_BG, SELECT = "#0f0f12", "#5a2a0a"
+OK, BAD = "#3ddc97", "#ff5d5d"
+
+SAMPLE ='''# Nova - a tiny language, compiled all the way down and run.
 func fib(n)
     if n < 2 then return n; end
     return fib(n - 1) + fib(n - 2);
@@ -59,17 +67,21 @@ class GlassBox:
         root.title("Nova - Glass-Box Compiler")
         root.geometry("1320x840")
 
-        bar = ttk.Frame(root, padding=(8, 6))
+        bar = ttk.Frame(root, padding=(12, 10))
         bar.pack(fill="x")
+        ttk.Label(bar, text="✦ Nova", style="Brand.TLabel").pack(side="left")
+        ttk.Label(bar, text="GLASS-BOX COMPILER", style="Sub.TLabel").pack(
+            side="left", padx=(8, 18), pady=(4, 0))
         ttk.Button(bar, text="Open .nova", command=self.open_file).pack(side="left")
         ttk.Button(bar, text="Compile  (F5)", command=self.compile).pack(side="left", padx=6)
-        ttk.Button(bar, text="Run", command=self.run_only).pack(side="left")
+        ttk.Button(bar, text="▶  Run", style="Accent.TButton",
+                   command=self.run_only).pack(side="left")
         ttk.Button(bar, text="Save HTML report",
                    command=self.save_report).pack(side="left", padx=6)
         self.optimise = tk.BooleanVar(value=True)
         ttk.Checkbutton(bar, text="optimiser on", variable=self.optimise,
                         command=self.compile).pack(side="left", padx=12)
-        self.status = ttk.Label(bar, text="ready")
+        self.status = ttk.Label(bar, text="ready", style="Status.TLabel")
         self.status.pack(side="right")
 
         self.nb = ttk.Notebook(root)
@@ -122,9 +134,11 @@ class GlassBox:
         frame = ttk.Frame(self.nb)
         self.nb.add(frame, text=title)
         txt = tk.Text(frame, wrap="none", font=MONO, undo=True,
-                      background="#0f2233" if not editable else "#ffffff",
-                      foreground="#e6eef4" if not editable else "#12161c",
-                      insertbackground="#12161c")
+                      background=CODE_BG if not editable else BG,
+                      foreground="#e4e4e6", insertbackground=ORANGE,
+                      selectbackground=SELECT, selectforeground=TEXT,
+                      relief="flat", borderwidth=0, highlightthickness=0,
+                      padx=10, pady=8, insertwidth=2)
         ys = ttk.Scrollbar(frame, orient="vertical", command=txt.yview)
         xs = ttk.Scrollbar(frame, orient="horizontal", command=txt.xview)
         txt.configure(yscrollcommand=ys.set, xscrollcommand=xs.set)
@@ -195,19 +209,24 @@ class GlassBox:
 
     def compile(self, *_):
         source = self.src.get("1.0", "end-1c")
-        self.status.configure(text="compiling...")
+        self.status.configure(text="compiling...", foreground=MUTED)
         self.root.update_idletasks()
         try:
-            res = compile_source(source, "editor buffer")
-        except Exception:
-            self._set(self.t_err, traceback.format_exc())
-            self.status.configure(text="internal error")
+            res = compile_source(source, "editor buffer",
+                                 optimise=self.optimise.get())
+        except Exception as exc:
+            traceback.print_exc()
+            self._fill(self.t_err, [["internal", "-", f"{type(exc).__name__}: {exc}",
+                                     "the full traceback is in the console"]])
+            self.nb.select(self.t_err.master)
+            self.status.configure(text="internal error", foreground=BAD)
             return
         self.result = res
         self.populate(res)
         self.status.configure(
             text=("compiled - " + ("verified and run" if res.verify_ok else "errors"))
-            + f"   ({len(res.errors)} diagnostic(s))")
+            + f"   ({len(res.errors)} diagnostic(s))",
+            foreground=ORANGE if res.verify_ok else BAD)
 
     # ------------------------------------------------------------- populate
     def populate(self, res: CompileResult) -> None:
@@ -353,6 +372,56 @@ class GlassBox:
                                  e.message, e.hint or ""] for e in res.errors])
 
 
+def apply_theme(root) -> None:
+    """Black and orange on ttk's 'clam' theme, which honours custom colours."""
+    st = ttk.Style(root)
+    st.theme_use("clam")
+    root.configure(background=BG)
+    root.option_add("*TCombobox*Listbox.background", SURFACE)
+    st.configure(".", background=BG, foreground=TEXT, fieldbackground=SURFACE,
+                 bordercolor=LINE, lightcolor=SURFACE, darkcolor=SURFACE,
+                 troughcolor=BG, focuscolor=ORANGE, font=UI)
+    st.configure("TFrame", background=BG)
+    st.configure("TLabel", background=BG, foreground=MUTED)
+    st.configure("Brand.TLabel", foreground=ORANGE, font=("Segoe UI Semibold", 15))
+    st.configure("Sub.TLabel", foreground=MUTED, font=("Segoe UI", 8))
+    st.configure("Status.TLabel", foreground=ORANGE, font=("Consolas", 10))
+    st.configure("TButton", background=SURFACE2, foreground=TEXT, bordercolor=LINE,
+                 lightcolor=SURFACE2, darkcolor=SURFACE2, padding=(12, 6), relief="flat")
+    st.map("TButton", background=[("pressed", ORANGE_DEEP), ("active", "#26262c")],
+           bordercolor=[("active", ORANGE)])
+    st.configure("Accent.TButton", background=ORANGE, foreground="#140a02",
+                 bordercolor=ORANGE, lightcolor=ORANGE, darkcolor=ORANGE,
+                 font=("Segoe UI Semibold", 10))
+    st.map("Accent.TButton", background=[("pressed", ORANGE_DEEP), ("active", ORANGE_HI)],
+           foreground=[("active", "#140a02")])
+    st.configure("TCheckbutton", background=BG, foreground=TEXT,
+                 indicatorbackground=SURFACE2, indicatorforeground="#140a02")
+    st.map("TCheckbutton", background=[("active", BG)],
+           indicatorbackground=[("selected", ORANGE), ("active", "#26262c")])
+    st.configure("TNotebook", background=BG, borderwidth=0, tabmargins=(8, 4, 8, 0))
+    st.configure("TNotebook.Tab", background=SURFACE, foreground=MUTED, padding=(6, 5),
+                 bordercolor=LINE, lightcolor=SURFACE, darkcolor=SURFACE,
+                 font=("Segoe UI", 9))
+    st.map("TNotebook.Tab", background=[("selected", SURFACE2), ("active", "#1a1a1f")],
+           foreground=[("selected", ORANGE), ("active", TEXT)],
+           lightcolor=[("selected", ORANGE)])
+    st.configure("Treeview", background=SURFACE, fieldbackground=SURFACE, foreground=TEXT,
+                 rowheight=24, bordercolor=LINE, lightcolor=SURFACE, darkcolor=SURFACE,
+                 font=MONO)
+    st.map("Treeview", background=[("selected", SELECT)], foreground=[("selected", ORANGE_HI)])
+    st.configure("Treeview.Heading", background=SURFACE2, foreground=MUTED, relief="flat",
+                 bordercolor=LINE, lightcolor=SURFACE2, darkcolor=SURFACE2,
+                 font=("Segoe UI Semibold", 9))
+    st.map("Treeview.Heading", background=[("active", "#26262c")],
+           foreground=[("active", ORANGE)])
+    for orient in ("Vertical", "Horizontal"):
+        st.configure(f"{orient}.TScrollbar", background=SURFACE2, troughcolor=BG,
+                     bordercolor=BG, lightcolor=SURFACE2, darkcolor=SURFACE2,
+                     arrowcolor=MUTED, gripcount=0)
+        st.map(f"{orient}.TScrollbar", background=[("active", "#3a3a44")])
+
+
 def main(path: Optional[str] = None) -> int:
     if not HAVE_TK:
         print("Tkinter is not available in this Python installation.\n"
@@ -361,10 +430,7 @@ def main(path: Optional[str] = None) -> int:
               "information to an HTML file.")
         return 1
     root = tk.Tk()
-    try:
-        ttk.Style().theme_use("vista")
-    except Exception:
-        pass
+    apply_theme(root)
     GlassBox(root, path)
     root.mainloop()
     return 0
