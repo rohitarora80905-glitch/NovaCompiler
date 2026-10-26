@@ -73,36 +73,33 @@
 
 \title{Nova: A Glass-Box Compiler with Verified Bytecode and an Interactive Studio for Compiler Education}
 
-%% >>> AUTHORS: the three students and the faculty guide of the project.
+%% >>> AUTHORS: the three students of the project, one row.
 \author{\IEEEauthorblockN{Harvi Bhavin Patel}
-\IEEEauthorblockA{\textit{School of Computer Science and Engineering} \\
+\IEEEauthorblockA{\textit{School of Computer Science} \\
+\textit{and Engineering} \\
 \textit{Vellore Institute of Technology}\\
-{Vellore, India} \\
-{Reg.\ No.\ 24BCE2557}}
+Vellore, India \\
+24BCE2557}
 \and
 \IEEEauthorblockN{Srishti Saluja}
-\IEEEauthorblockA{\textit{School of Computer Science and Engineering} \\
+\IEEEauthorblockA{\textit{School of Computer Science} \\
+\textit{and Engineering} \\
 \textit{Vellore Institute of Technology}\\
-{Vellore, India} \\
-{Reg.\ No.\ 24BCE2587}}
+Vellore, India \\
+24BCE2587}
 \and
 \IEEEauthorblockN{Nainika Pathak}
-\IEEEauthorblockA{\textit{School of Computer Science and Engineering} \\
+\IEEEauthorblockA{\textit{School of Computer Science} \\
+\textit{and Engineering} \\
 \textit{Vellore Institute of Technology}\\
-{Vellore, India} \\
-{Reg.\ No.\ 24BCE0230}}
-\and
-\IEEEauthorblockN{Dr.\ Hariharan R L}
-\IEEEauthorblockA{\textit{Assistant Professor Senior Grade 1} \\
-\textit{Centre for Artificial Intelligence Research}\\
-\textit{Vellore Institute of Technology}, Vellore, India \\
-{hariharan.rl@vit.ac.in}}
+Vellore, India \\
+24BCE0230}
 }
 
 \maketitle
 
 \begin{abstract}
-Production compilers are black boxes: the automata, parse tables, intermediate representations and data-flow facts that they compute are discarded or buried in textual dumps, which makes compiler construction difficult to learn and compiler output difficult to trust. This paper presents Nova, a complete optimising compiler for an original imperative language, written from first principles in 7,059 lines of dependency-free Python, that retains and exposes every artefact it computes. Nova builds its scanner from regular expressions by the direct (followpos) method, parses with a recursive-descent parser that is cross-checked against SLR(1), canonical LR(1) and LALR(1) tables built from the same 58-production grammar, type-checks with an L-attributed definition, emits backpatched three-address code, applies eight optimisation passes driven by four data-flow analyses, allocates registers from next-use information, constructs static single assignment (SSA) form and classifies loops for parallelism. Its bytecode is proved safe by an abstract-interpretation verifier before it runs in a resource-bounded virtual machine, and every program is executed by three independent back-ends whose outputs must agree. A local web application, Nova Studio, recompiles as the user types and renders every phase as an interactive instrument: a scanner trace through the DFA, a browser for all 116 states of the LALR(1) automaton and its table, a parse player, drawn syntax trees, DAGs and dominator trees, data-flow facts on the flow graph, a register-occupancy timeline and a virtual-machine stepper. On an eleven-program benchmark suite, LALR(1) matches SLR(1)'s 116 states with 75\% fewer table entries than canonical LR(1); every data-flow analysis converges within the number of passes that theory predicts; the optimiser shrinks bytecode by up to 23\% on non-trivial programs without changing any output; all eight hostile bytecode programs are stopped; and ten of the eleven programs compile in under 40\,ms on a battery-throttled laptop. A scaling study shows where the glass box costs: the bookkeeping of modules 5--7 grows between quadratically and cubically with program size. Exposing every phase also surfaced six latent defects, including missing $\phi$-functions in functions that begin with a loop, all now fixed.
+Production compilers are black boxes: the automata, parse tables, intermediate representations and data-flow facts that they compute are discarded or buried in textual dumps, which makes compiler construction difficult to learn and compiler output difficult to trust. This paper presents Nova, a complete optimising compiler for an original imperative language, written from first principles in 7,059 lines of dependency-free Python, that retains and exposes every artefact it computes. Nova builds its scanner from regular expressions by the direct (followpos) method, parses with a recursive-descent parser that is cross-checked against SLR(1), canonical LR(1) and LALR(1) tables built from the same 58-production grammar, type-checks with an L-attributed definition, emits backpatched three-address code, applies eight optimisation passes driven by four data-flow analyses, allocates registers from next-use information, constructs static single assignment (SSA) form and classifies loops for parallelism. Its bytecode is proved safe by an abstract-interpretation verifier before it runs in a resource-bounded virtual machine, and every program is executed by three independent back-ends whose outputs must agree. A local web application, Nova Studio, recompiles as the user types and renders every phase as an interactive instrument: a scanner trace through the DFA, a browser for all 116 states of the LALR(1) automaton and its table, a parse player, drawn syntax trees, DAGs and dominator trees, data-flow facts on the flow graph, a register-occupancy timeline and a virtual-machine stepper. On an eleven-program benchmark suite, LALR(1) matches SLR(1)'s 116 states with 75\% fewer table entries than canonical LR(1); every data-flow analysis converges within the number of passes that theory predicts; the optimiser shrinks bytecode by up to 23\% on non-trivial programs without changing any output; all eight hostile bytecode programs are stopped; and ten of the eleven programs compile in under 40\,ms on a battery-throttled laptop. A scaling study shows where the glass box costs: the bookkeeping of modules 5--7 grows between quadratically and cubically with program size. The same compilation is available from a command-line interface, a Tkinter desktop viewer and a self-contained HTML report, all rendering one retained result, and a 34-test self-check covers every syllabus module. Exposing every phase also surfaced six latent defects, including missing $\phi$-functions in functions that begin with a loop, all now fixed.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -1746,30 +1743,27 @@ Everything in this report can be regenerated from the repository with the standa
 \end{enumerate}
 The command-line listings of Section~\ref{sec:cli} are the unedited output of the commands named in their captions, saved under \code{report/data/cli}.
 
-\section*{Project Team and Supervision}
-This work was carried out as the course project of the Compiler Design course at the Vellore Institute of Technology, Vellore, under the guidance of the faculty member listed in Table~\ref{tab:team}.
+\section*{Project Team}
+This work was carried out by the team listed in Table~\ref{tab:team} as the course project of the Compiler Design course at the Vellore Institute of Technology, Vellore.
 
 \begin{table}[!h]
-\caption{Project Team and Faculty Guide}
+\caption{Project Team}
 \label{tab:team}
 \centering
 \footnotesize
-\setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{@{}L{2.3cm} l L{3.8cm}@{}}
+\begin{tabular}{@{}l l@{}}
 \toprule
-Name & Role & Registration no. / designation \\
+Name & Registration no. \\
 \midrule
-Harvi Bhavin Patel & Student & 24BCE2557 \\
-Srishti Saluja & Student & 24BCE2587 \\
-Nainika Pathak & Student & 24BCE0230 \\
-\midrule
-Dr.\ Hariharan R L & Faculty guide & Assistant Professor Senior Grade 1, Centre for Artificial Intelligence Research, VIT, Vellore; \code{hariharan.rl@vit.ac.in}; cabin SJT Block 510-A47 \\
+Harvi Bhavin Patel & 24BCE2557 \\
+Srishti Saluja & 24BCE2587 \\
+Nainika Pathak & 24BCE0230 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \section*{Acknowledgment}
-The authors thank Dr.\ Hariharan R L, Assistant Professor Senior Grade 1, Centre for Artificial Intelligence Research, Vellore Institute of Technology, Vellore, for guidance throughout the Compiler Design course project, and the Vellore Institute of Technology for the facilities that made the work possible.
+The authors thank the Vellore Institute of Technology for the course and the facilities that made this work possible.
 
 % =============================================================================
 \begin{thebibliography}{00}

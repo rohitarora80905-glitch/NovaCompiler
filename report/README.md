@@ -20,19 +20,15 @@ References.
 
 ## Project team
 
-| Name | Role | Registration no. |
-|---|---|---|
-| Harvi Bhavin Patel | Student | 24BCE2557 |
-| Srishti Saluja | Student | 24BCE2587 |
-| Nainika Pathak | Student | 24BCE0230 |
+| Name | Registration no. |
+|---|---|
+| Harvi Bhavin Patel | 24BCE2557 |
+| Srishti Saluja | 24BCE2587 |
+| Nainika Pathak | 24BCE0230 |
 
-Faculty guide: Dr. Hariharan R L, Assistant Professor Senior Grade 1, Centre
-for Artificial Intelligence Research, Vellore Institute of Technology
-(hariharan.rl@vit.ac.in, cabin SJT Block 510-A47).
-
-The author block at the top of `main.tex` lists the three students and the
-faculty guide; the same details appear in the "Project Team and Supervision"
-table and the Acknowledgment at the end.
+The author block at the top of `main.tex` lists the three students in one
+row (name, school, institute, city, registration number); the same names
+appear in the "Project Team" table at the end.
 
 ## Editing on Overleaf
 
