@@ -1,6 +1,6 @@
 # Nova — IEEE conference-format project report
 
-`Nova-IEEE-Report.pdf` is the compiled report: 44 pages, 85 figures built
+`Nova-IEEE-Report.pdf` is the compiled report: 41 pages, 85 figures built
 from 87 screenshots of Nova Studio, the desktop viewer and the HTML report
 plus unedited command-line listings, 20 tables, 67 references and four
 appendices (grammar, bytecode instruction set, self-test output, how to
