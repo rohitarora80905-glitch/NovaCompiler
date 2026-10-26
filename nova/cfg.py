@@ -135,7 +135,10 @@ class CFG:
         df: Dict[int, Set[int]] = {i: set() for i in range(len(self.blocks))}
         for b in range(len(self.blocks)):
             preds = self.blocks[b].preds
-            if len(preds) < 2:
+            # the entry block also has an implicit edge from the function's
+            # start, so a back edge into it (a function that opens with a
+            # loop) makes it a join point too
+            if len(preds) + (b == self.entry) < 2:
                 continue
             for p in preds:
                 runner = p

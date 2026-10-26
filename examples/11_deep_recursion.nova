@@ -1,0 +1,16 @@
+# Two hundred nested activation records - inside the sandbox's limit of 256,
+# so it runs.  Change the 200 to 300 and the sandbox stops it instead of
+# letting the stack grow without bound.
+
+func depth(n)
+    if n == 0 then return 0; end
+    return 1 + depth(n - 1);
+end
+
+func fact(n)
+    if n < 2 then return 1; end
+    return n * fact(n - 1);
+end
+
+print depth(200);
+print fact(12);

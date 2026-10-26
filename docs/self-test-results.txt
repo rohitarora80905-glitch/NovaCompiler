@@ -1,4 +1,4 @@
-Nova self-test - 32 tests
+Nova self-test - 34 tests
 ======================================================================================
 M1  regex to DFA by the direct method: (a|b)*abb has 4 states               ok
 M1  DFA minimisation merges equivalent states                               ok
@@ -10,6 +10,7 @@ M2  SLR, CLR and LALR all accept the Nova grammar; LALR is the compact one  ok
 M2  the LALR parser accepts exactly what the hand-written parser accepts    ok
 M3  the type checker catches the mistakes and allows the rest               ok
 M3  an inner declaration shadows an outer one instead of overwriting it     ok
+M3  a function that is called is marked used in the symbol table            ok
 M4  booleans are compiled as jumping code, so 'and' short circuits          ok
 M4  'case' becomes a jump table and every jump gets backpatched             ok
 M5  copy propagation refuses to propagate a killed copy (the gcd trap)      ok
@@ -19,6 +20,7 @@ M6  the register machine and the stack machine agree on every example       ok
 M6  optimised and unoptimised code produce identical output                 ok
 M6  recursion builds and unwinds real activation records                    ok
 M7  phi functions appear exactly where the dominance frontier says          ok
+M7  a function that opens with a loop still gets its phi functions          ok
 M7  loop dependence analysis separates parallel from sequential loops       ok
 M8  honest bytecode passes the verifier                                     ok
 M8  every hostile bytecode program is stopped                               ok
@@ -33,4 +35,4 @@ M2  the parse-table cache adds CLR after a shallow build                    ok
 WEB every example serialises to JSON for Nova Studio                        ok
 WEB the studio server answers over HTTP and refuses unsafe requests         ok
 ======================================================================================
-32 passed, 0 failed
+34 passed, 0 failed

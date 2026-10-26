@@ -185,6 +185,14 @@ def _():
     eq(res.run_opt.output, ["10"], "the outer x must survive")
 
 
+@test("M3  a function that is called is marked used in the symbol table")
+def _():
+    res = compile_ok("func twice(v)\n  return v + v;\nend\n"
+                     "func idle(v)\n  return v;\nend\nprint twice(4);")
+    used = {r[0]: r[7] for r in res.sema.symbol_rows() if r[1] == "func"}
+    eq(used, {"twice": "yes", "idle": "no"}, "function 'used' flags")
+
+
 # ============================================================ Module 4
 @test("M4  booleans are compiled as jumping code, so 'and' short circuits")
 def _():
@@ -298,6 +306,23 @@ def _():
         raise AssertionError("no phi function in the SSA listing")
 
 
+@test("M7  a function that opens with a loop still gets its phi functions")
+def _():
+    with open(os.path.join(EXAMPLES, "03_gcd.nova"), encoding="utf-8") as fh:
+        res = compile_source(fh.read(), "03", deep_tables=False)
+    art = res.functions["gcd"]
+    entry = art.cfg_after.entry
+    if not art.cfg_after.blocks[entry].preds:
+        raise AssertionError("expected gcd's loop header to be its entry block")
+    head = art.ssa.blocks[entry]
+    for v in ("a", "b"):
+        if not any(l.strip().startswith(f"{v}_") and f"phi(entry:{v}" in l for l in head):
+            raise AssertionError(f"no phi for '{v}' at the entry loop header:\n"
+                                 + "\n".join(head))
+    if entry not in art.cfg_after.dominance_frontiers()[entry]:
+        raise AssertionError("a loop header must be in its own dominance frontier")
+
+
 @test("M7  loop dependence analysis separates parallel from sequential loops")
 def _():
     with open(os.path.join(EXAMPLES, "06_parallel.nova"), encoding="utf-8") as fh:
@@ -357,6 +382,9 @@ def _():
         "05_optimiser.nova": ["320"],
         "06_parallel.nova": ["14", "28", "551"],
         "07_types_and_scopes.nova": ["positive", "negative", "zero", "10"],
+        "09_nested_loops.nova": ["18"],
+        "10_strings.nova": ["== nova ==", "hello, everyone", "checks pass", "many"],
+        "11_deep_recursion.nova": ["200", "479001600"],
     }
     for name, want in expected.items():
         with open(os.path.join(EXAMPLES, name), encoding="utf-8") as fh:

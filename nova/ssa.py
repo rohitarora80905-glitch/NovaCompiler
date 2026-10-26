@@ -97,8 +97,9 @@ def to_ssa(cfg: CFG, params: List[str]) -> SSAResult:
         for v in sorted(phis[bid]):
             nm = fresh(v)
             pushed.append(v)
-            lines.append(f"{nm} = phi(" +
-                         ", ".join(f"B{p}:{v}" for p in cfg.blocks[bid].preds) + ")")
+            srcs = (["entry"] if bid == cfg.entry else []) + \
+                   [f"B{p}" for p in cfg.blocks[bid].preds]
+            lines.append(f"{nm} = phi(" + ", ".join(f"{s}:{v}" for s in srcs) + ")")
             phis[bid][v] = [(p, "") for p in cfg.blocks[bid].preds]
         for q in cfg.blocks[bid].quads:
             nq = q.copy()

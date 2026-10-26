@@ -39,7 +39,7 @@ python -m nova run examples/03_gcd.nova           compile, verify and run
 python -m nova report examples/02_fibonacci.nova  a full HTML report you can open
 python -m nova phases examples/05_optimiser.nova  every phase, printed
 python -m nova attack                             hostile bytecode vs the verifier
-python -m nova test                               the 32-test self-check
+python -m nova test                               the 34-test self-check
 ```
 
 There is **nothing to install**. No PLY, no ANTLR, no LLVM, no C or C++
@@ -66,13 +66,27 @@ the right, in a black-and-orange interface.
   data-flow analyses converging; activation records, next-use and register
   allocation; SSA, dominance frontiers and loop-parallelism verdicts; the
   verifier's proofs; the VM trace and the activation-record stack.
+- **Step through it.** A **parse player** replays the LALR(1) driver one action
+  at a time, with the state stack, the symbol stack, the handle being reduced
+  and the remaining input; a **VM stepper** walks the bytecode with the operand
+  stack, the locals, the call depth and the output so far. Both play, pause and
+  scrub, and answer the keyboard.
+- **The machinery itself.** Click any token to see the DFA states the scanner
+  walked; browse every state of the LALR(1) automaton with its items,
+  look-aheads, ACTION and GOTO entries, and the table they come from; see the
+  annotated syntax tree, the DAG of each basic block, the dominator tree and
+  the data-flow facts drawn onto the flow graph; watch registers fill and empty
+  on a timeline.
 - **Three back-ends side by side.** Optimised bytecode, unoptimised bytecode
   and the register machine must print the same thing — the overview shows it.
 - **Security lab.** The eight hostile bytecode programs, and what stopped each.
 - **Problems that point at the code.** Diagnostics are marked in the gutter;
   click one to jump to the line.
+- **Syllabus map.** Each of the eight modules: what it asks for, what Nova does,
+  the numbers for this program, and a link to the view that shows it.
 - **Optimiser switch**, example programs, open or drag-and-drop a `.nova` file,
-  download the full HTML report, deep links (`#tab=optimiser&fn=main`), and a
+  download the full HTML report or the compile JSON, **share a link** that
+  carries the whole program, deep links (`#tab=optimiser&fn=main`), and a
   layout that works down to phone width.
 
 While you type, each program gets a 250,000-instruction budget so a loop you
@@ -84,7 +98,7 @@ rejects foreign `Host` headers, so other web pages cannot drive it.
 |---|---|
 | `GET /api/health` | version and budgets |
 | `GET /api/examples` | the example programs |
-| `GET /api/grammar` | grammar, FIRST/FOLLOW, LL(1) conflicts, the ambiguity demo |
+| `GET /api/grammar` | grammar, FIRST/FOLLOW, LL(1) conflicts, the ambiguity demo, the DFA's accepting states and the whole LALR(1) automaton with its ACTION/GOTO table (computed once) |
 | `POST /api/compile` | `{source, optimise, mode: "live"\|"run"}` → every phase as JSON |
 | `POST /api/report` | the HTML report as a download |
 | `GET /api/attacks` | hostile bytecode vs the verifier and sandbox |
@@ -167,7 +181,7 @@ Numbers produced by the compiler itself, not claims:
 | **LALR** states / entries / conflicts | 116 / 1214 / **0** |
 | Optimiser on `05_optimiser.nova` | **21 → 19** IR, **55 → 47** bytecode, **188 → 148** VM steps |
 | Hostile bytecode programs stopped | **8 of 8** |
-| Self-tests passing | **32 of 32** |
+| Self-tests passing | **34 of 34** |
 
 The LALR line is the point of the exercise: same state count as SLR, the power
 of CLR, a quarter of CLR's size. That is why every real parser generator emits
@@ -195,6 +209,9 @@ already been killed inside a loop) was caught and fixed in `gcd`.
 | `06_parallel.nova` | three loops — vectorisable, a reduction, genuinely sequential |
 | `07_types_and_scopes.nova` | shadowing, scopes, type checking |
 | `08_broken.nova` | one mistake per phase; the compiler reports all of them and recovers |
+| `09_nested_loops.nova` | a nested loop pair: two verdicts, plus interchange and tiling advice |
+| `10_strings.nova` | strings, booleans, if/else inside a function, `case` with `otherwise` |
+| `11_deep_recursion.nova` | 200 nested activation records, inside the sandbox's limit of 256 |
 
 ---
 
@@ -207,9 +224,10 @@ NovaCompiler/
 ├── test.bat           double-click self-test
 ├── requirements.txt   intentionally empty
 ├── nova/              the compiler (25 modules)
+├── report/            the IEEE-format project report and the scripts that regenerate it
 │   └── web/           Nova Studio's page
-├── examples/          8 sample programs
-├── tests/test_all.py  32 self-tests
+├── examples/          11 sample programs
+├── tests/test_all.py  34 self-tests
 └── docs/              generated reports
 ```
 

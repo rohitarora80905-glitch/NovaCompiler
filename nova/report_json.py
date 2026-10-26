@@ -6,6 +6,13 @@ plain dicts and lists that `json.dumps` accepts, so the browser can draw every
 phase itself.  Nothing is recomputed here - it only reads what the pipeline
 kept.  Long lists are capped and carry their true length, so a program with a
 hundred thousand parse steps still produces a response of sensible size.
+
+Two views exist:
+
+    grammar_view()    everything that depends only on the language - the DFA,
+                      the grammar, FIRST/FOLLOW, the LALR automaton and its
+                      ACTION/GOTO table.  Computed once and cached.
+    build_json(res)   everything that depends on the program.
 """
 from __future__ import annotations
 
@@ -13,10 +20,11 @@ from typing import Dict, List, Optional, Sequence
 
 from .cfg import CFG, fmt_block
 from .dataflow import fmt_def, fmt_expr
-from .lexer import TOKEN_SPECS
+from .grammar import EOF
+from .lexer import Lexer, TOKEN_SPECS
 from .lr import LRBuilder
 from .nova_grammar import AMBIGUOUS_NOVA_EXPR, NOVA_GRAMMAR
-from .pipeline import CompileResult
+from .pipeline import CompileResult, lr_tables
 
 ROW_LIMIT = 2500
 
@@ -43,8 +51,41 @@ def is_warning(e) -> bool:
 
 
 # ------------------------------------------------------------------ grammar
+def _lalr_view(builder: LRBuilder, table) -> dict:
+    """The LALR(1) automaton: every state's items (look-aheads merged per
+    core) and the ACTION / GOTO rows, sparse."""
+    g = builder.g
+    states = []
+    for I in table.states:
+        merged: Dict[tuple, set] = {}
+        for pi, dot, la in sorted(I):
+            merged.setdefault((pi, dot), set()).add(la)
+        items = []
+        for (pi, dot), las in sorted(merged.items()):
+            p = g.productions[pi]
+            rhs = list(p.rhs)
+            rhs.insert(dot, "•")
+            items.append({"lhs": p.lhs, "rhs": " ".join(rhs), "prod": pi,
+                          "kernel": dot > 0 or pi == 0,
+                          "la": sorted(las, key=lambda s: (s != EOF, s))})
+        states.append(items)
+    action: Dict[str, Dict[str, str]] = {}
+    for (s, sym), (kind, n) in table.action.items():
+        action.setdefault(str(s), {})[sym] = {"s": f"s{n}", "r": f"r{n}", "acc": "acc"}[kind]
+    goto: Dict[str, Dict[str, int]] = {}
+    for (s, nt), j in table.goto.items():
+        goto.setdefault(str(s), {})[nt] = j
+    return {"kind": table.kind, "n_states": table.n_states, "states": states,
+            "action": action, "goto": goto,
+            "terminals": list(g.terminals) + [EOF],
+            "nonterminals": list(g.nonterminals),
+            "productions": [{"index": p.index, "lhs": p.lhs,
+                             "rhs": " ".join(p.rhs) if p.rhs else "ε",
+                             "n": len(p.rhs)} for p in g.productions]}
+
+
 def grammar_view() -> dict:
-    """Everything about the grammar itself.  It never changes, so build it once."""
+    """Everything about the language itself.  It never changes, so build it once."""
     global _GRAMMAR_CACHE
     if _GRAMMAR_CACHE is not None:
         return _GRAMMAR_CACHE
@@ -54,6 +95,8 @@ def grammar_view() -> dict:
     g2, log = g.eliminate_left_recursion()
     _, ll1_after = g2.ll1_table()
     amb = LRBuilder(AMBIGUOUS_NOVA_EXPR).build_slr()
+    tables = lr_tables(g, deep=False)
+    dfa, trace = Lexer.build()
     _GRAMMAR_CACHE = {
         "text": str(g),
         "productions": len(g.productions),
@@ -69,6 +112,11 @@ def grammar_view() -> dict:
                       "conflicts": rows([[c.state, c.symbol, c.kind, c.detail]
                                          for c in amb.conflicts])},
         "token_specs": rows([[i, n, r] for i, (n, r) in enumerate(TOKEN_SPECS)]),
+        "dfa": {"start": dfa.start, "n_states": dfa.n_states,
+                "accept": {str(s): Lexer._names.get(t, "") for s, t in dfa.accept.items()},
+                "classes": [dfa.class_label(i) for i in range(len(dfa.classes))],
+                "n_before": trace.dfa_before.n_states},
+        "lalr": _lalr_view(tables["_builder"], tables["LALR"]),   # type: ignore[arg-type]
     }
     return _GRAMMAR_CACHE
 
@@ -109,11 +157,17 @@ def _function(name: str, art) -> dict:
         "opt_notes": list(art.opt.notes),
         "dag": [{"block": bid, "nodes": [nd.render() for nd in nodes]}
                 for bid, nodes in sorted(art.opt.dag_nodes.items()) if nodes],
+        "dag_graph": [{"block": bid,
+                       "nodes": [{"id": nd.id, "op": nd.op, "value": nd.value,
+                                  "children": list(nd.children),
+                                  "labels": list(nd.labels)} for nd in nodes]}
+                      for bid, nodes in sorted(art.opt.dag_nodes.items()) if nodes],
         "dataflow": [_dataflow(d, f) for d, f in flows if d is not None],
         "frame": rows(cg.frame.rows()),
         "nextuse": rows([[f"B{r.block}.{r.index}", r.instr, r.nextuse, r.live]
                          for r in cg.nextuse_rows]),
         "decisions": rows(cg.decisions),
+        "registers": cg.nreg,
         "target": cg.listing(),
         "spills": cg.spills,
         "dominators": rows([[f"B{b}",
@@ -121,6 +175,7 @@ def _function(name: str, art) -> dict:
                              else "-",
                              "{" + ", ".join(f"B{x}" for x in sorted(df.get(b, ()))) + "}"]
                             for b in range(len(art.cfg_after.blocks))]),
+        "idom": {str(b): p for b, p in art.ssa.idom.items() if p is not None},
         "ssa": ["\n".join(bl) for bl in art.ssa.blocks],
         "ssa_notes": list(art.ssa.notes),
         "phis": art.ssa.phis_inserted,
@@ -128,6 +183,7 @@ def _function(name: str, art) -> dict:
                    "induction": list(l.induction), "carried": list(l.carried),
                    "reductions": list(l.reductions),
                    "privatisable": list(getattr(l, "privatisable", [])),
+                   "depth": getattr(l, "depth", 1),
                    "verdict": l.verdict, "reason": l.reason,
                    "suggestions": list(l.suggestions)} for l in art.loops],
     }
@@ -165,6 +221,8 @@ def build_json(res: CompileResult, optimise: bool = True,
     out["lexical"] = None if lx is None else {
         "stats": lx.dfa_stats(),
         "tokens": rows([[t.type, t.lexeme, t.line, t.col, t.attribute] for t in toks]),
+        "scan": [{"t": t.type, "lx": t.lexeme, "line": t.line, "col": t.col,
+                  "path": list(t.path), "overrun": t.overrun, "ahead": t.ahead} for t in toks[:ROW_LIMIT]],
         "followpos": rows(lx.followpos_rows(400)),
         "dfa": rows(lx.dfa_table()),
     }
@@ -184,12 +242,13 @@ def build_json(res: CompileResult, optimise: bool = True,
 
     # -------------------------------------------------------------- module 3
     if res.sema:
-        from .ast_nodes import dump
+        from .ast_nodes import dump, tree
         out["semantic"] = {
             "symbols": rows(res.sema.symbol_rows()),
             "sdd": rows([[r["production"], r["inherited"], r["synthesized"]]
                          for r in res.sema.sdd_log]),
             "ast": dump(res.ast) if res.ast else "",
+            "ast_tree": tree(res.ast) if res.ast else None,
         }
     else:
         out["semantic"] = None
@@ -205,10 +264,17 @@ def build_json(res: CompileResult, optimise: bool = True,
         "raw_total": res.bprog_raw.total_instructions() if res.bprog_raw else 0,
         "opt_total": res.bprog_opt.total_instructions(),
         "peephole": list(res.peephole_notes),
+        "strings": list(res.bprog_opt.strings),
+        "functions": [{"name": f.name, "nparams": f.nparams, "nslots": f.nslots,
+                       "returns": f.returns_value, "max_stack": f.max_stack,
+                       "code": [ins.text().strip() for ins in f.code]}
+                      for f in res.bprog_opt.functions.values()],
     }
     out["verifier"] = [{"function": r.function, "ok": r.ok, "max_stack": r.max_stack,
                         "checks": [list(c) for c in r.checks],
-                        "errors": list(r.errors)} for r in res.verify]
+                        "errors": list(r.errors),
+                        "depth_at": {str(k): v for k, v in sorted(r.depth_at.items())}}
+                       for r in res.verify]
 
     # ------------------------------------------------------------- execution
     run = res.run_opt
@@ -220,7 +286,7 @@ def build_json(res: CompileResult, optimise: bool = True,
             "steps": run.steps, "max_frames": run.max_frames,
             "max_stack": run.max_stack,
             "frames": [str(f) for f in run.frames_snapshots],
-            "trace": rows([[t.step, t.func, t.pc, t.instr, t.stack, t.depth]
+            "trace": rows([[t.step, t.func, t.pc, t.instr, t.stack, t.depth, t.locals]
                            for t in run.trace]),
             "raw": raw, "reg": reg,
             "agree": bool(reg and raw and run.output == reg["output"] == raw["output"]),

@@ -154,6 +154,7 @@ def cfg_svg(cfg: CFG, title: str = "") -> str:
             x += BW + HGAP
         width = max(width, x)
         y += h + VGAP
+    width += 40                                # room for back edges round the side
     height = y
 
     parts = [f'<svg viewBox="0 0 {width} {height}" width="100%" '
@@ -174,9 +175,10 @@ def cfg_svg(cfg: CFG, title: str = "") -> str:
             x1, y1 = x + BW / 2, yy + hgt
             x2, y2 = sx + BW / 2, sy
             if sy <= yy:                       # back edge - draw it round the side
+                bulge = max(x, sx) + BW + 46   # outside both blocks, never through one
                 parts.append(
-                    f'<path d="M{x + BW} {yy + hgt / 2} C{x + BW + 46} '
-                    f'{yy + hgt / 2}, {sx + BW + 46} {sy + 12}, {sx + BW} {sy + 12}" '
+                    f'<path d="M{x + BW} {yy + hgt / 2} C{bulge} '
+                    f'{yy + hgt / 2}, {bulge} {sy + 12}, {sx + BW} {sy + 12}" '
                     f'fill="none" stroke="#ff7a1a" stroke-width="1.6" '
                     f'marker-end="url(#ar-o)" stroke-dasharray="5,3"/>')
             else:

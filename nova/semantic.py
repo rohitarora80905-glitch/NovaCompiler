@@ -362,6 +362,9 @@ class SemanticAnalyzer:
             self.err(node, f"call to unknown function '{node.name}'",
                      "check the spelling, or declare it with  func " + node.name + "(...)")
             return ERR
+        fsym = self.globals.lookup(node.name)
+        if fsym is not None:
+            fsym.used = True
         if len(arg_types) != len(info.params):
             self.err(node, f"'{node.name}' takes {len(info.params)} argument(s) "
                            f"but got {len(arg_types)}")

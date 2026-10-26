@@ -1,0 +1,17 @@
+# A nested loop pair.  The dependence analyser classifies both loops, and for
+# the inner one it adds the two classical cache transformations a real
+# compiler would consider next: loop interchange and tiling.
+
+let n = 4;
+let m = 3;
+let i = 0;
+let total = 0;
+while i < n do
+    let j = 0;
+    while j < m do
+        total = total + i * j;
+        j = j + 1;
+    end
+    i = i + 1;
+end
+print total;

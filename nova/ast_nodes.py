@@ -130,6 +130,62 @@ class Program(Node):
 
 
 # ------------------------------------------------------------------- printing
+def tree(node) -> dict:
+    """The AST as nested dicts {label, type, kids} - what a viewer draws."""
+    def kids_of(items):
+        return [tree(k) for k in items if k is not None]
+
+    def mk(label, kids=(), ty=None, line=0):
+        return {"label": label, "type": ty or "", "line": line, "kids": list(kids)}
+
+    if node is None:
+        return mk("-")
+    if isinstance(node, list):
+        return mk("block", kids_of(node))
+    ty, ln = node.type, node.line
+    if isinstance(node, Num):
+        return mk(str(node.value), ty=ty, line=ln)
+    if isinstance(node, Str):
+        return mk(f'"{node.value}"', ty=ty, line=ln)
+    if isinstance(node, Bool):
+        return mk(str(node.value).lower(), ty=ty, line=ln)
+    if isinstance(node, Var):
+        return mk(node.name, ty=ty, line=ln)
+    if isinstance(node, Binary):
+        return mk(node.op, kids_of([node.left, node.right]), ty, ln)
+    if isinstance(node, Unary):
+        return mk(node.op, kids_of([node.operand]), ty, ln)
+    if isinstance(node, (Call, CallStmt)):
+        return mk(f"call {node.name}", kids_of(node.args), ty, ln)
+    if isinstance(node, Let):
+        return mk(f"let {node.name}", kids_of([node.expr]), ty, ln)
+    if isinstance(node, Assign):
+        return mk(f"{node.name} =", kids_of([node.expr]), ty, ln)
+    if isinstance(node, If):
+        kids = [tree(node.cond), mk("then", kids_of(node.then_body))]
+        if node.else_body:
+            kids.append(mk("else", kids_of(node.else_body)))
+        return mk("if", kids, line=ln)
+    if isinstance(node, While):
+        return mk("while", [tree(node.cond), mk("do", kids_of(node.body))], line=ln)
+    if isinstance(node, Case):
+        kids = [tree(node.expr)]
+        kids += [mk(f"when {c.value}", kids_of(c.body), line=c.line) for c in node.clauses]
+        if node.otherwise:
+            kids.append(mk("otherwise", kids_of(node.otherwise)))
+        return mk("case", kids, line=ln)
+    if isinstance(node, Print):
+        return mk("print", kids_of([node.expr]), line=ln)
+    if isinstance(node, Return):
+        return mk("return", kids_of([node.expr]), line=ln)
+    if isinstance(node, FuncDecl):
+        return mk(f"func {node.name}({', '.join(node.params)})", kids_of(node.body),
+                  ty, ln)
+    if isinstance(node, Program):
+        return mk("program", [tree(f) for f in node.funcs] + [mk("main", kids_of(node.main))])
+    return mk(type(node).__name__, line=ln)
+
+
 def dump(node, indent: int = 0, annotated: bool = True) -> str:
     """Pretty-print the AST; with `annotated`, show the type attribute too."""
     pad = "  " * indent

@@ -2,3 +2,12 @@ __pycache__/
 *.py[cod]
 *-report.html
 ~$*
+report/*.aux
+report/*.log
+report/*.out
+report/*.fls
+report/*.fdb_latexmk
+report/*.synctex.gz
+report/*.blg
+report/*.bbl
+report/main.pdf

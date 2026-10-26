@@ -9,7 +9,7 @@ way Lex does it.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
 from .regexdfa import BuildTrace, DFA, build_lexer_dfa
@@ -61,6 +61,9 @@ class Token:
     line: int
     col: int
     value: object = None          # the *attribute* (int value, string body, ...)
+    path: List[int] = field(default_factory=list)   # DFA states visited
+    overrun: int = 0              # characters read past the token, then given back
+    ahead: str = ""               # those characters
 
     def __repr__(self) -> str:            # pragma: no cover - debugging aid
         return f"<{self.type} {self.lexeme!r} @{self.line}:{self.col}>"
@@ -112,12 +115,14 @@ class Lexer:
             last_accept = -1
             last_pos = i
             j = i
+            path = [state]                  # the states this token walked through
             while j < n:
                 nxt = self.dfa.step(state, src[j])
                 if nxt < 0:
                     break
                 state = nxt
                 j += 1
+                path.append(state)
                 if state in self.dfa.accept:
                     last_accept = self.dfa.accept[state]
                     last_pos = j
@@ -132,7 +137,8 @@ class Lexer:
 
             lexeme = src[i:last_pos]
             ttype = self.names[last_accept]
-            tok = Token(ttype, lexeme, line, col)
+            tok = Token(ttype, lexeme, line, col, path=path, overrun=j - last_pos,
+                        ahead=src[last_pos:j])
             if ttype == "NUMBER":
                 tok.value = int(lexeme)
             elif ttype == "STRING":

@@ -64,6 +64,7 @@ class TraceRow:
     instr: str
     stack: str
     depth: int
+    locals: str = ""              # the current frame's locals, rendered
 
 
 @dataclass
@@ -109,10 +110,13 @@ class VM:
                     raise VMError(f"pc {fr.pc} outside '{fr.func}'")
                 ins = fn.code[fr.pc]
                 if len(res.trace) < self.trace_limit:
+                    names = self.slot_names.get(fr.func)
                     res.trace.append(TraceRow(
                         step, fr.func, fr.pc, ins.text().strip(),
                         "[" + ", ".join(_show(x) for x in fr.stack) + "]",
-                        len(frames)))
+                        len(frames),
+                        ", ".join(f"{names[k] if names and k < len(names) else 's%d' % k}"
+                                  f"={_show(v)}" for k, v in enumerate(fr.locals))))
                 fr.pc += 1
                 step += 1
                 res.max_stack = max(res.max_stack, len(fr.stack))

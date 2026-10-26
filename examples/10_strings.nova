@@ -1,0 +1,25 @@
+# Strings, booleans, an if/else inside a function, and a case with an
+# 'otherwise' branch.  '+' joins two strings; comparisons produce bools.
+
+func greet(n)
+    if n > 1 then
+        print "hello, everyone";
+    else
+        print "hello";
+    end
+    return n;
+end
+
+let who = "nova";
+let banner = "== " + who + " ==";
+print banner;
+
+let count = greet(3);
+let ok = count == 3 and not (count > 5);
+if ok then print "checks pass"; end
+
+case count of
+    when 1: print "one";
+    when 2: print "two";
+    otherwise print "many";
+end
